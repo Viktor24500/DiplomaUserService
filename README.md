@@ -1,4 +1,4 @@
-# DiplomaSystemAuthService
+# DiplomaUserService
 
 Diploma service for login, user and role management
 
