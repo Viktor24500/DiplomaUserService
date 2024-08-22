@@ -1,0 +1,14 @@
+﻿using Microsoft.Extensions.DependencyInjection;
+using SystemUserService.DataAccess.Repositories;
+using SystemUserService.DataAccess.Repositories.Intefaces;
+
+namespace SystemUserService.DataAccess.Configuration
+{
+    public static class DataAccessServicesCollection
+    {
+        public static void AddDataAccessServices(this IServiceCollection services)
+        {
+            services.AddScoped<IRolesRepository, RolesRepository>();
+        }
+    }
+}
