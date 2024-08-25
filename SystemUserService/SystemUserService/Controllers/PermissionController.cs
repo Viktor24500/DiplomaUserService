@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SystemUserService.BusinessLogic.Entities.Roles;
+using SystemUserService.BusinessLogic.Entities.Permissions;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.ErrorCodes;
 using SystemUserService.Common.Results;
@@ -8,31 +8,31 @@ namespace SystemUserService.Controllers
 {
     //[Route("api/[controller]")]
     [ApiController]
-    public class RolesController : ControllerBase
+    public class PermissionController : ControllerBase
     {
-        private IRoleService _roleService;
-        public RolesController(IRoleService roleService)
+        private IPermissionService _permissionService;
+        public PermissionController(IPermissionService permissionService)
         {
-            _roleService = roleService;
+            _permissionService = permissionService;
         }
 
-        [Route("/roles")]
+        [Route("/permissions")]
         [HttpGet]
-        public async Task<IActionResult> GetAllRoles()
+        public async Task<IActionResult> GetAllPermissions()
         {
-            Result<List<Role>> result = await _roleService.GetAllRoles();
+            Result<List<Permission>> result = await _permissionService.GetAllPermissions();
             if (result.ErrorCode == (int)ErrorCodes.Success)
             {
                 return Ok(result.Data);
             }
-            throw new Exception("Could not get all roles");
+            throw new Exception("Could not get all permissions");
         }
 
-        [Route("/roles/{id}")]
+        [Route("/permissions/{id}")]
         [HttpGet]
-        public async Task<IActionResult> GetRole(int id)
+        public async Task<IActionResult> GetPermission(int id)
         {
-            Result<Role> result = await _roleService.GetRole(id);
+            Result<Permission> result = await _permissionService.GetPermission(id);
             if (result.ErrorCode == (int)ErrorCodes.NotFound)
             {
                 return NotFound(result.ErrorMessage);
@@ -45,14 +45,14 @@ namespace SystemUserService.Controllers
             {
                 return Ok(result.Data);
             }
-            throw new Exception("Could not get role");
+            throw new Exception("Could not get permission");
         }
 
-        [Route("/roles")]
+        [Route("/permissions")]
         [HttpPost]
-        public async Task<IActionResult> CreateRole(string name)
+        public async Task<IActionResult> CreatePermission(string name)
         {
-            Result<Role> result = await _roleService.CreateRole(name);
+            Result<Permission> result = await _permissionService.CreatPermission(name);
             if (result.ErrorCode == (int)ErrorCodes.Conflict)
             {
                 return Conflict(result.ErrorMessage);
@@ -63,16 +63,16 @@ namespace SystemUserService.Controllers
             }
             if (result.ErrorCode == (int)ErrorCodes.Success)
             {
-                return Created("/roles", result.Data);
+                return Created("/permissions", result.Data);
             }
-            throw new Exception("Could not create role");
+            throw new Exception("Could not create permission");
         }
 
-        [Route("/roles/{id}")]
+        [Route("/permissions/{id}")]
         [HttpPut]
-        public async Task<IActionResult> UpdateRole(int id, string name)
+        public async Task<IActionResult> UpdatePermission(int id, string name)
         {
-            Result<Role> result = await _roleService.UpdateRole(id, name);
+            Result<Permission> result = await _permissionService.UpdatePermission(id, name);
             if (result.ErrorCode == (int)ErrorCodes.Success)
             {
                 return Ok(result.Data);
@@ -89,7 +89,7 @@ namespace SystemUserService.Controllers
             {
                 return Conflict(result.ErrorMessage);
             }
-            throw new Exception("Could not create role");
+            throw new Exception("Could not create permission");
         }
     }
 }

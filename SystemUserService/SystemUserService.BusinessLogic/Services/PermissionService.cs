@@ -1,58 +1,58 @@
 ﻿using Microsoft.Extensions.Logging;
-using SystemUserService.BusinessLogic.Entities.Roles;
+using SystemUserService.BusinessLogic.Entities.Permissions;
 using SystemUserService.BusinessLogic.Extensions;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.ErrorCodes;
 using SystemUserService.Common.Results;
-using SystemUserService.DataAccess.DTO.Roles;
+using SystemUserService.DataAccess.DTO.Permissions;
 using SystemUserService.DataAccess.Repositories.Intefaces;
 
 namespace SystemUserService.BusinessLogic.Services
 {
-    public class RoleService : IRoleService
+    public class PermissionService : IPermissionService
     {
-        private IRolesRepository _rolesRepository;
-        private ILogger<RoleService> _logger;
-        public RoleService(IRolesRepository rolesRepository, ILogger<RoleService> logger)
+        private IPermissionsRepository _permissionsRepository;
+        private ILogger<PermissionService> _logger;
+        public PermissionService(IPermissionsRepository permissionsRepository, ILogger<PermissionService> logger)
         {
-            _rolesRepository = rolesRepository;
+            _permissionsRepository = permissionsRepository;
             _logger = logger;
         }
 
-        public async Task<Result<Role>> CreateRole(string name)
+        public async Task<Result<Permission>> CreatPermission(string name)
         {
-            Result<Role> result = new Result<Role>();
-            if (IsRoleNameValid(name))
+            Result<Permission> result = new Result<Permission>();
+            if (IsPermissionNameValid(name))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "name can't be null or empty";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            Result<RoleDTO> repResult = await _rolesRepository.GetRoleByName(name);
+            Result<PermissionDTO> repResult = await _permissionsRepository.GetPermissionByName(name);
             if (repResult.ErrorCode == (int)ErrorCodes.Success)
             {
                 result.ErrorCode = (int)ErrorCodes.Conflict;
-                result.ErrorMessage = $"Role with name {name} exist";
+                result.ErrorMessage = $"Permission with name {name} exist";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            repResult = await _rolesRepository.CreateRole(name);
-            result.Data = repResult.Data.MapToRole();
+            repResult = await _permissionsRepository.CreatePermission(name);
+            result.Data = repResult.Data.MapToPermission();
             return result;
         }
 
-        public async Task<Result<List<Role>>> GetAllRoles()
+        public async Task<Result<List<Permission>>> GetAllPermissions()
         {
-            Result<List<RoleDTO>> repResult = await _rolesRepository.GetAllRoles();
-            Result<List<Role>> result = new Result<List<Role>>();
-            result.Data = repResult.Data.MapToRolesCollection();
+            Result<List<PermissionDTO>> repResult = await _permissionsRepository.GetAllPermissions();
+            Result<List<Permission>> result = new Result<List<Permission>>();
+            result.Data = repResult.Data.MapToPermissionsCollection();
             return result;
         }
 
-        public async Task<Result<Role>> GetRole(int id)
+        public async Task<Result<Permission>> GetPermission(int id)
         {
-            Result<Role> result = new Result<Role>();
+            Result<Permission> result = new Result<Permission>();
             if (IntExtension.IsNegative(id))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -60,21 +60,21 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            Result<RoleDTO> repResult = await _rolesRepository.GetRole(id);
+            Result<PermissionDTO> repResult = await _permissionsRepository.GetPermission(id);
             if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
             {
                 result.ErrorCode = (int)ErrorCodes.NotFound;
-                result.ErrorMessage = $"Role with {id} not exist";
+                result.ErrorMessage = $"Permission with {id} not exist";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            result.Data = repResult.Data.MapToRole();
+            result.Data = repResult.Data.MapToPermission();
             return result;
         }
 
-        public async Task<Result<Role>> UpdateRole(int id, string name)
+        public async Task<Result<Permission>> UpdatePermission(int id, string name)
         {
-            Result<Role> result = new Result<Role>();
+            Result<Permission> result = new Result<Permission>();
             if (IntExtension.IsNegative(id))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -82,7 +82,7 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            if (IsRoleNameValid(name))
+            if (IsPermissionNameValid(name))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "name can't be null or empty";
@@ -90,31 +90,30 @@ namespace SystemUserService.BusinessLogic.Services
                 return result;
             }
 
-            Result<RoleDTO> repResult = await _rolesRepository.GetRoleByName(name);
+            Result<PermissionDTO> repResult = await _permissionsRepository.GetPermissionByName(name);
             if (repResult.ErrorCode == (int)ErrorCodes.Success)
             {
                 result.ErrorCode = (int)ErrorCodes.Conflict;
-                result.ErrorMessage = $"Role with name {name} exist";
+                result.ErrorMessage = $"Permission with name {name} exist";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
 
-            repResult = await _rolesRepository.UpdateRole(id, name);
+            repResult = await _permissionsRepository.UpdatePermission(id, name);
             if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
             {
                 result.ErrorCode = (int)ErrorCodes.NotFound;
-                result.ErrorMessage = $"Role with {id} not exist";
+                result.ErrorMessage = $"Permission with {id} not exist";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            repResult = await _rolesRepository.GetRole(id);
-            result.Data = repResult.Data.MapToRole();
+            result.Data = repResult.Data.MapToPermission();
             return result;
         }
 
-        private bool IsRoleNameValid(string roleName)
+        private bool IsPermissionNameValid(string permissionName)
         {
-            return string.IsNullOrWhiteSpace(roleName);
+            return string.IsNullOrWhiteSpace(permissionName);
         }
     }
 }

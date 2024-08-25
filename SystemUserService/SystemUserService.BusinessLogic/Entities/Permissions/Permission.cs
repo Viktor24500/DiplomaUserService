@@ -1,8 +1,8 @@
-﻿namespace SystemUserService.BusinessLogic.Entities.Roles
+﻿namespace SystemUserService.BusinessLogic.Entities.Permissions
 {
-    public class Role
+    public class Permission
     {
-        public Role(int id, string name)
+        public Permission(int id, string name)
         {
             Id = id;
             Name = name;
