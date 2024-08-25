@@ -1,4 +1,4 @@
-﻿using SystemUserService.BusinessLogic.Entities.Roles;
+﻿using SystemUserService.BusinessLogic.Entities.Permissions;
 
 namespace SystemUserService.BusinessLogic.Entities.Users
 {
@@ -10,7 +10,7 @@ namespace SystemUserService.BusinessLogic.Entities.Users
             Username = userName;
             UserPassword = userPassword;
             IsActive = isActive;
-            Role = new Role(roleId, roleName);
+            Role = new Permission(roleId, roleName);
         }
         public int UserID { get; set; }
 
@@ -19,6 +19,6 @@ namespace SystemUserService.BusinessLogic.Entities.Users
 
         public bool IsActive { get; set; }
 
-        public Role Role { get; set; }
+        public Permission Role { get; set; }
     }
 }
