@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using SystemUserService.Common.ErrorCodes;
+using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
 using SystemUserService.DataAccess.DTO.Permissions;
 using SystemUserService.DataAccess.Repositories.Intefaces;

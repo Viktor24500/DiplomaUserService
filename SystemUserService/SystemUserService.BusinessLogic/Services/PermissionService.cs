@@ -2,7 +2,7 @@
 using SystemUserService.BusinessLogic.Entities.Permissions;
 using SystemUserService.BusinessLogic.Extensions;
 using SystemUserService.BusinessLogic.Services.Interfaces;
-using SystemUserService.Common.ErrorCodes;
+using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
 using SystemUserService.DataAccess.DTO.Permissions;
 using SystemUserService.DataAccess.Repositories.Intefaces;

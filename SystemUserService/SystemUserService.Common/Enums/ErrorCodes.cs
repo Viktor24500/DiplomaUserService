@@ -1,4 +1,4 @@
-﻿namespace SystemUserService.Common.ErrorCodes
+﻿namespace SystemUserService.Common.Enums
 {
     public enum ErrorCodes : ushort
     {

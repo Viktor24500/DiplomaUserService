@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
 using SystemUserService.BusinessLogic.Entities.Users;
 using SystemUserService.BusinessLogic.Extensions;
 using SystemUserService.BusinessLogic.Services.Interfaces;
-using SystemUserService.Common.ErrorCodes;
+using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
+using SystemUserService.Common.Validators;
 using SystemUserService.DataAccess.DTO.Permissions;
 using SystemUserService.DataAccess.DTO.Users;
 using SystemUserService.DataAccess.Repositories.Intefaces;
@@ -15,11 +17,13 @@ namespace SystemUserService.BusinessLogic.Services
         private IUsersRepository _usersRepository;
         private IPermissionsRepository _permissionsRepository;
         private ILogger<UserService> _logger;
-        public UserService(IUsersRepository usersRepository, ILogger<UserService> logger, IPermissionsRepository permissionsRepository)
+        private PasswordChecks _passwordChecks;
+        public UserService(IUsersRepository usersRepository, ILogger<UserService> logger, IPermissionsRepository permissionsRepository, PasswordChecks passwordChecks)
         {
             _usersRepository = usersRepository;
             _logger = logger;
             _permissionsRepository = permissionsRepository;
+            _passwordChecks = passwordChecks;
         }
         public async Task<Result<User>> CreateUser(string userName, string userPassword, bool isActive, int permissionId)
         {
@@ -39,7 +43,14 @@ namespace SystemUserService.BusinessLogic.Services
                 return result;
             }
 
-            //Check password pattern
+            Result passResult = _passwordChecks.isPasswordValid(userPassword);
+            if (passResult.ErrorCode == (int)ErrorCodes.BadRequest)
+            {
+                result.ErrorCode = passResult.ErrorCode;
+                result.ErrorMessage = passResult.ErrorMessage;
+                _logger.LogError(result.ErrorMessage);
+                return result;
+            }
 
             //Search permission
             Result<PermissionDTO> permissionResult = await _permissionsRepository.GetPermission(permissionId);
@@ -184,6 +195,20 @@ namespace SystemUserService.BusinessLogic.Services
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "name can't be null or empty";
+                _logger.LogError(result.ErrorMessage);
+                return result;
+            }
+
+            //Check password pattern
+            Regex hasNumber = new Regex(@"[0-9]+"); //has more than 1 number
+            Regex hasLetter = new Regex(@"[A-Z]+[a-z]+"); // has more than 1 capital and small letter
+            //Regex hasNumberAndLetter = new Regex(@"\w+"); //has more than 1 number and letter
+            Regex hasMinimum8Chars = new Regex(@".{8,}"); //has minimum 8 char
+
+            if (!(hasNumber.IsMatch(userPassword) && hasLetter.IsMatch(userPassword) && hasMinimum8Chars.IsMatch(userPassword)))
+            {
+                result.ErrorCode = (int)ErrorCodes.BadRequest;
+                result.ErrorMessage = "password not match pattern";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SystemUserService.BusinessLogic.Entities.Permissions;
 using SystemUserService.BusinessLogic.Services.Interfaces;
-using SystemUserService.Common.ErrorCodes;
+using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
 
 namespace SystemUserService.Controllers
