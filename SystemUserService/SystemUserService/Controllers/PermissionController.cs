@@ -50,9 +50,9 @@ namespace SystemUserService.Controllers
 
         [Route("/permissions")]
         [HttpPost]
-        public async Task<IActionResult> CreatePermission(string name)
+        public async Task<IActionResult> CreatePermission(string name, string? description)
         {
-            Result<Permission> result = await _permissionService.CreatePermission(name);
+            Result<Permission> result = await _permissionService.CreatePermission(name, description);
             if (result.ErrorCode == (int)ErrorCodes.Conflict)
             {
                 return Conflict(result.ErrorMessage);
@@ -70,9 +70,9 @@ namespace SystemUserService.Controllers
 
         [Route("/permissions/{id}")]
         [HttpPut]
-        public async Task<IActionResult> UpdatePermission(int id, string name)
+        public async Task<IActionResult> UpdatePermission(int id, string name, string? description)
         {
-            Result<Permission> result = await _permissionService.UpdatePermission(id, name);
+            Result<Permission> result = await _permissionService.UpdatePermission(id, name, description);
             if (result.ErrorCode == (int)ErrorCodes.Success)
             {
                 return Ok(result.Data);

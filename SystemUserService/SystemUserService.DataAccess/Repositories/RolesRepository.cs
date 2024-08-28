@@ -16,7 +16,7 @@ namespace SystemUserService.DataAccess.Repositories
             _connectionString = configuration.GetConnectionString(Constants.MainConnectionString);
         }
 
-        public async Task<Result<RoleDTO>> CreateRole(string name)
+        public async Task<Result<RoleDTO>> CreateRole(string name, string? description)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -25,14 +25,31 @@ namespace SystemUserService.DataAccess.Repositories
 
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("@name", name);
+                if (description != null)
+                {
+                    command.Parameters.AddWithValue("@description", description);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@description", DBNull.Value);
+                }
                 await using (SqlDataReader reader = command.ExecuteReader())
                 {
                     Result<RoleDTO> result = new Result<RoleDTO>();
                     while (reader.Read())
                     {
+                        if (reader.IsDBNull(reader.GetOrdinal("roleDescription")))
+                        {
+                            description = null;
+                        }
+                        else
+                        {
+                            description = reader.GetString(reader.GetOrdinal("roleDescription"));
+                        }
                         result.Data = new RoleDTO(
                             reader.GetInt32(reader.GetOrdinal("roleId")),
-                            reader.GetString(reader.GetOrdinal("roleName"))
+                            reader.GetString(reader.GetOrdinal("roleName")),
+                            description
                             );
                     }
                     return result;
@@ -53,9 +70,19 @@ namespace SystemUserService.DataAccess.Repositories
                     result.Data = new List<RoleDTO>();
                     while (reader.Read())
                     {
+                        string? description;
+                        if (reader.IsDBNull(reader.GetOrdinal("roleDescription")))
+                        {
+                            description = null;
+                        }
+                        else
+                        {
+                            description = reader.GetString(reader.GetOrdinal("roleDescription"));
+                        }
                         RoleDTO role = new RoleDTO(
                             reader.GetInt32(reader.GetOrdinal("roleId")),
-                            reader.GetString(reader.GetOrdinal("roleName"))
+                            reader.GetString(reader.GetOrdinal("roleName")),
+                            description
                             );
                         result.Data.Add(role);
                     }
@@ -77,9 +104,19 @@ namespace SystemUserService.DataAccess.Repositories
                     Result<RoleDTO> result = new Result<RoleDTO>();
                     while (reader.Read())
                     {
+                        string? description;
+                        if (reader.IsDBNull(reader.GetOrdinal("roleDescription")))
+                        {
+                            description = null;
+                        }
+                        else
+                        {
+                            description = reader.GetString(reader.GetOrdinal("roleDescription"));
+                        }
                         result.Data = new RoleDTO(
                             reader.GetInt32(reader.GetOrdinal("roleId")),
-                            reader.GetString(reader.GetOrdinal("roleName"))
+                            reader.GetString(reader.GetOrdinal("roleName")),
+                            description
                             );
                     }
                     if (result.Data != null)
@@ -106,9 +143,19 @@ namespace SystemUserService.DataAccess.Repositories
                     Result<RoleDTO> result = new Result<RoleDTO>();
                     while (reader.Read())
                     {
+                        string? description;
+                        if (reader.IsDBNull(reader.GetOrdinal("roleDescription")))
+                        {
+                            description = null;
+                        }
+                        else
+                        {
+                            description = reader.GetString(reader.GetOrdinal("roleDescription"));
+                        }
                         result.Data = new RoleDTO(
                             reader.GetInt32(reader.GetOrdinal("roleId")),
-                            reader.GetString(reader.GetOrdinal("roleName"))
+                            reader.GetString(reader.GetOrdinal("roleName")),
+                            description
                             );
                     }
                     if (result.Data != null)
@@ -122,21 +169,24 @@ namespace SystemUserService.DataAccess.Repositories
             }
         }
 
-        public async Task<Result<RoleDTO>> UpdateRole(int id, string name)
+        public async Task<Result<RoleDTO>> UpdateRole(int id, string name, string? description)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 Result<RoleDTO> result = new Result<RoleDTO>();
                 connection.Open();
-
-                //Update role
-                string query = @"EXEC updateRole @name=@roleName , @id=@roleID";
-                SqlCommand command = new SqlCommand(query, connection);
-
-                command.Parameters.Add("@roleID", SqlDbType.Int);
-                command.Parameters["@roleID"].Value = id;
-                command.Parameters.Add("@roleName", SqlDbType.VarChar);
-                command.Parameters["@roleName"].Value = name;
+                SqlCommand command = new SqlCommand("updateRole", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@name", name);
+                if (description != null)
+                {
+                    command.Parameters.AddWithValue("@description", description);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@description", DBNull.Value);
+                }
 
                 if (command.ExecuteNonQuery() <= 0)
                 {
@@ -148,9 +198,18 @@ namespace SystemUserService.DataAccess.Repositories
                 {
                     while (reader.Read())
                     {
+                        if (reader.IsDBNull(reader.GetOrdinal("roleDescription")))
+                        {
+                            description = null;
+                        }
+                        else
+                        {
+                            description = reader.GetString(reader.GetOrdinal("roleDescription"));
+                        }
                         result.Data = new RoleDTO(
                             reader.GetInt32(reader.GetOrdinal("roleId")),
-                            reader.GetString(reader.GetOrdinal("roleName"))
+                            reader.GetString(reader.GetOrdinal("roleName")),
+                            description
                             );
                     }
                     result.ErrorCode = (int)ErrorCodes.Success;

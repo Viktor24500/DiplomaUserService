@@ -19,7 +19,7 @@ namespace SystemUserService.BusinessLogic.Services
             _logger = logger;
         }
 
-        public async Task<Result<Role>> CreateRole(string name)
+        public async Task<Result<Role>> CreateRole(string name, string? description)
         {
             Result<Role> result = new Result<Role>();
             if (string.IsNullOrWhiteSpace(name))
@@ -37,7 +37,7 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            repResult = await _rolesRepository.CreateRole(name);
+            repResult = await _rolesRepository.CreateRole(name, description);
             result.Data = repResult.Data.MapToRole();
             return result;
         }
@@ -72,7 +72,7 @@ namespace SystemUserService.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Result<Role>> UpdateRole(int id, string name)
+        public async Task<Result<Role>> UpdateRole(int id, string name, string? description)
         {
             Result<Role> result = new Result<Role>();
             if (IntExtension.IsNegative(id))
@@ -89,17 +89,19 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-
             Result<RoleDTO> repResult = await _rolesRepository.GetRoleByName(name);
-            if (repResult.ErrorCode == (int)ErrorCodes.Success)
+            if (repResult.ErrorCode != (int)ErrorCodes.NotFound)
             {
-                result.ErrorCode = (int)ErrorCodes.Conflict;
-                result.ErrorMessage = $"Role with name {name} exist";
-                _logger.LogError(result.ErrorMessage);
-                return result;
+                if (repResult.Data.Id != id)
+                {
+                    result.ErrorCode = (int)ErrorCodes.Conflict;
+                    result.ErrorMessage = $"Role with name {name} exist";
+                    _logger.LogError(result.ErrorMessage);
+                    return result;
+                }
             }
 
-            repResult = await _rolesRepository.UpdateRole(id, name);
+            repResult = await _rolesRepository.UpdateRole(id, name, description);
             if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
             {
                 result.ErrorCode = (int)ErrorCodes.NotFound;

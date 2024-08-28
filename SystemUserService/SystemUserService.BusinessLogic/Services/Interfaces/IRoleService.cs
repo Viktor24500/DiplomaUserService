@@ -8,8 +8,8 @@ namespace SystemUserService.BusinessLogic.Services.Interfaces
         Task<Result<List<Role>>> GetAllRoles();
 
         Task<Result<Role>> GetRole(int id);
-        Task<Result<Role>> UpdateRole(int id, string name);
+        Task<Result<Role>> UpdateRole(int id, string name, string? description);
 
-        Task<Result<Role>> CreateRole(string name);
+        Task<Result<Role>> CreateRole(string name, string? description);
     }
 }

@@ -16,7 +16,7 @@ namespace SystemUserService.DataAccess.Repositories
         {
             _connectionString = configuration.GetConnectionString(Constants.MainConnectionString);
         }
-        public async Task<Result<PermissionDTO>> CreatePermission(string name)
+        public async Task<Result<PermissionDTO>> CreatePermission(string name, string? description)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -25,14 +25,31 @@ namespace SystemUserService.DataAccess.Repositories
 
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("@name", name);
+                if (description != null)
+                {
+                    command.Parameters.AddWithValue("@description", description);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@description", DBNull.Value);
+                }
                 await using (SqlDataReader reader = command.ExecuteReader())
                 {
                     Result<PermissionDTO> result = new Result<PermissionDTO>();
                     while (reader.Read())
                     {
+                        if (reader.IsDBNull(reader.GetOrdinal("permissionDescription")))
+                        {
+                            description = null;
+                        }
+                        else
+                        {
+                            description = reader.GetString(reader.GetOrdinal("permissionDescription"));
+                        }
                         result.Data = new PermissionDTO(
                             reader.GetInt32(reader.GetOrdinal("permissionId")),
-                            reader.GetString(reader.GetOrdinal("permissionName"))
+                            reader.GetString(reader.GetOrdinal("permissionName")),
+                            description
                             );
                     }
                     return result;
@@ -53,9 +70,19 @@ namespace SystemUserService.DataAccess.Repositories
                     result.Data = new List<PermissionDTO>();
                     while (reader.Read())
                     {
+                        string? description;
+                        if (reader.IsDBNull(reader.GetOrdinal("permissionDescription")))
+                        {
+                            description = null;
+                        }
+                        else
+                        {
+                            description = reader.GetString(reader.GetOrdinal("permissionDescription"));
+                        }
                         PermissionDTO permission = new PermissionDTO(
                             reader.GetInt32(reader.GetOrdinal("permissionId")),
-                            reader.GetString(reader.GetOrdinal("permissionName"))
+                            reader.GetString(reader.GetOrdinal("permissionName")),
+                            description
                             );
                         result.Data.Add(permission);
                     }
@@ -77,9 +104,19 @@ namespace SystemUserService.DataAccess.Repositories
                     Result<PermissionDTO> result = new Result<PermissionDTO>();
                     while (reader.Read())
                     {
+                        string? description;
+                        if (reader.IsDBNull(reader.GetOrdinal("permissionDescription")))
+                        {
+                            description = null;
+                        }
+                        else
+                        {
+                            description = reader.GetString(reader.GetOrdinal("permissionDescription"));
+                        }
                         result.Data = new PermissionDTO(
                             reader.GetInt32(reader.GetOrdinal("permissionId")),
-                            reader.GetString(reader.GetOrdinal("permissionName"))
+                            reader.GetString(reader.GetOrdinal("permissionName")),
+                            description
                             );
                     }
                     if (result.Data != null)
@@ -106,9 +143,19 @@ namespace SystemUserService.DataAccess.Repositories
                     Result<PermissionDTO> result = new Result<PermissionDTO>();
                     while (reader.Read())
                     {
+                        string? description;
+                        if (reader.IsDBNull(reader.GetOrdinal("permissionDescription")))
+                        {
+                            description = null;
+                        }
+                        else
+                        {
+                            description = reader.GetString(reader.GetOrdinal("permissionDescription"));
+                        }
                         result.Data = new PermissionDTO(
                             reader.GetInt32(reader.GetOrdinal("permissionId")),
-                            reader.GetString(reader.GetOrdinal("permissionName"))
+                            reader.GetString(reader.GetOrdinal("permissionName")),
+                            description
                             );
                     }
                     if (result.Data != null)
@@ -122,21 +169,25 @@ namespace SystemUserService.DataAccess.Repositories
             }
         }
 
-        public async Task<Result<PermissionDTO>> UpdatePermission(int id, string name)
+        public async Task<Result<PermissionDTO>> UpdatePermission(int id, string name, string? description)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 Result<PermissionDTO> result = new Result<PermissionDTO>();
                 connection.Open();
 
-                //Update permission
-                string query = @"EXEC updatePermission @name=@permissionName , @id=@permissionID";
-                SqlCommand command = new SqlCommand(query, connection);
-
-                command.Parameters.Add("@permissionID", SqlDbType.Int);
-                command.Parameters["@permissionID"].Value = id;
-                command.Parameters.Add("@permissionName", SqlDbType.VarChar);
-                command.Parameters["@permissionName"].Value = name;
+                SqlCommand command = new SqlCommand("updatePermission", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@name", name);
+                if (description != null)
+                {
+                    command.Parameters.AddWithValue("@description", description);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@description", DBNull.Value);
+                }
 
                 if (command.ExecuteNonQuery() <= 0)
                 {
@@ -148,9 +199,18 @@ namespace SystemUserService.DataAccess.Repositories
                 {
                     while (reader.Read())
                     {
+                        if (reader.IsDBNull(reader.GetOrdinal("permissionDescription")))
+                        {
+                            description = null;
+                        }
+                        else
+                        {
+                            description = reader.GetString(reader.GetOrdinal("permissionDescription"));
+                        }
                         result.Data = new PermissionDTO(
                             reader.GetInt32(reader.GetOrdinal("permissionId")),
-                            reader.GetString(reader.GetOrdinal("permissionName"))
+                            reader.GetString(reader.GetOrdinal("permissionName")),
+                            description
                             );
                     }
                     result.ErrorCode = (int)ErrorCodes.Success;

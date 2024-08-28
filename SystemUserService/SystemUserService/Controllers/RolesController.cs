@@ -50,9 +50,9 @@ namespace SystemUserService.Controllers
 
         [Route("/roles")]
         [HttpPost]
-        public async Task<IActionResult> CreateRole(string name)
+        public async Task<IActionResult> CreateRole(string name, string? description)
         {
-            Result<Role> result = await _roleService.CreateRole(name);
+            Result<Role> result = await _roleService.CreateRole(name, description);
             if (result.ErrorCode == (int)ErrorCodes.Conflict)
             {
                 return Conflict(result.ErrorMessage);
@@ -70,9 +70,9 @@ namespace SystemUserService.Controllers
 
         [Route("/roles/{id}")]
         [HttpPut]
-        public async Task<IActionResult> UpdateRole(int id, string name)
+        public async Task<IActionResult> UpdateRole(int id, string name, string? description)
         {
-            Result<Role> result = await _roleService.UpdateRole(id, name);
+            Result<Role> result = await _roleService.UpdateRole(id, name, description);
             if (result.ErrorCode == (int)ErrorCodes.Success)
             {
                 return Ok(result.Data);

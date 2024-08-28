@@ -19,7 +19,7 @@ namespace SystemUserService.BusinessLogic.Services
             _logger = logger;
         }
 
-        public async Task<Result<Permission>> CreatePermission(string name)
+        public async Task<Result<Permission>> CreatePermission(string name, string? description)
         {
             Result<Permission> result = new Result<Permission>();
             if (IsPermissionNameValid(name))
@@ -37,7 +37,7 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            repResult = await _permissionsRepository.CreatePermission(name);
+            repResult = await _permissionsRepository.CreatePermission(name, description);
             result.Data = repResult.Data.MapToPermission();
             return result;
         }
@@ -72,7 +72,7 @@ namespace SystemUserService.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Result<Permission>> UpdatePermission(int id, string name)
+        public async Task<Result<Permission>> UpdatePermission(int id, string name, string? description)
         {
             Result<Permission> result = new Result<Permission>();
             if (IntExtension.IsNegative(id))
@@ -91,15 +91,18 @@ namespace SystemUserService.BusinessLogic.Services
             }
 
             Result<PermissionDTO> repResult = await _permissionsRepository.GetPermissionByName(name);
-            if (repResult.ErrorCode == (int)ErrorCodes.Success)
+            if (repResult.ErrorCode != (int)ErrorCodes.NotFound)
             {
-                result.ErrorCode = (int)ErrorCodes.Conflict;
-                result.ErrorMessage = $"Permission with name {name} exist";
-                _logger.LogError(result.ErrorMessage);
-                return result;
+                if (repResult.Data.Id != id)
+                {
+                    result.ErrorCode = (int)ErrorCodes.Conflict;
+                    result.ErrorMessage = $"Permission with name {name} exist";
+                    _logger.LogError(result.ErrorMessage);
+                    return result;
+                }
             }
 
-            repResult = await _permissionsRepository.UpdatePermission(id, name);
+            repResult = await _permissionsRepository.UpdatePermission(id, name, description);
             if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
             {
                 result.ErrorCode = (int)ErrorCodes.NotFound;
