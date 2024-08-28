@@ -19,7 +19,7 @@ namespace SystemUserService.BusinessLogic.Services
             _logger = logger;
         }
 
-        public async Task<Result<Permission>> CreatPermission(string name)
+        public async Task<Result<Permission>> CreatePermission(string name)
         {
             Result<Permission> result = new Result<Permission>();
             if (IsPermissionNameValid(name))
