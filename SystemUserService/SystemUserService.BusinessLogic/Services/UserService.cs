@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Text.RegularExpressions;
 using SystemUserService.BusinessLogic.Entities.Users;
 using SystemUserService.BusinessLogic.Extensions;
 using SystemUserService.BusinessLogic.Services.Interfaces;
@@ -88,7 +87,7 @@ namespace SystemUserService.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Result<User>> GetUserByUserId(int id)
+        public async Task<Result<User>> GetUserById(int id)
         {
             Result<User> result = new Result<User>();
             if (IntExtension.IsNegative(id))
@@ -110,55 +109,7 @@ namespace SystemUserService.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Result<List<User>>> GetUserByRoleId(int id)
-        {
-            Result<List<User>> result = new Result<List<User>>();
-            if (IntExtension.IsNegative(id))
-            {
-                result.ErrorCode = (int)ErrorCodes.BadRequest;
-                result.ErrorMessage = "id can't be negative";
-                _logger.LogError(result.ErrorMessage);
-                return result;
-            }
-            Result<List<UserDTO>> repResult = await _usersRepository.GetUserByRoleId(id);
-            if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
-            {
-                result.ErrorCode = (int)ErrorCodes.NotFound;
-                result.ErrorMessage = $"User with {id} not exist";
-                _logger.LogError(result.ErrorMessage);
-                return result;
-            }
-            result.Data = repResult.Data.MapToUsersCollection();
-            return result;
-        }
-
-        public async Task<Result<List<User>>> GetUserByRoleName(string name)
-        {
-            Result<List<User>> result = new Result<List<User>>();
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                result.ErrorCode = (int)ErrorCodes.BadRequest;
-                result.ErrorMessage = "name can't be null or empty";
-                _logger.LogError(result.ErrorMessage);
-                return result;
-            }
-
-            //Search permission
-            Result<PermissionDTO> permissionResult = await _permissionsRepository.GetPermissionByName(name);
-            if (permissionResult.ErrorCode != (int)ErrorCodes.Success)
-            {
-                result.ErrorCode = (int)ErrorCodes.NotFound;
-                result.ErrorMessage = $"Permission with {name} not exist";
-                _logger.LogError(result.ErrorMessage);
-                return result;
-            }
-
-            Result<List<UserDTO>> repResult = await _usersRepository.GetUserByRoleName(name);
-            result.Data = repResult.Data.MapToUsersCollection();
-            return result;
-        }
-
-        public async Task<Result<User>> GetUserByUserName(string name)
+        public async Task<Result<User>> GetUserByName(string name)
         {
             Result<User> result = new Result<User>();
             if (string.IsNullOrWhiteSpace(name))
@@ -199,16 +150,11 @@ namespace SystemUserService.BusinessLogic.Services
                 return result;
             }
 
-            //Check password pattern
-            Regex hasNumber = new Regex(@"[0-9]+"); //has more than 1 number
-            Regex hasLetter = new Regex(@"[A-Z]+[a-z]+"); // has more than 1 capital and small letter
-            //Regex hasNumberAndLetter = new Regex(@"\w+"); //has more than 1 number and letter
-            Regex hasMinimum8Chars = new Regex(@".{8,}"); //has minimum 8 char
-
-            if (!(hasNumber.IsMatch(userPassword) && hasLetter.IsMatch(userPassword) && hasMinimum8Chars.IsMatch(userPassword)))
+            Result passResult = _passwordChecks.isPasswordValid(userPassword);
+            if (passResult.ErrorCode == (int)ErrorCodes.BadRequest)
             {
-                result.ErrorCode = (int)ErrorCodes.BadRequest;
-                result.ErrorMessage = "password not match pattern";
+                result.ErrorCode = passResult.ErrorCode;
+                result.ErrorMessage = passResult.ErrorMessage;
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
