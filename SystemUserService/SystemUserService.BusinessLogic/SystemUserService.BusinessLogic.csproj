@@ -15,4 +15,8 @@
     <ProjectReference Include="..\SystemUserService.DataAccess\SystemUserService.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\Users\" />
+  </ItemGroup>
+
 </Project>

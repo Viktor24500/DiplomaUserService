@@ -9,7 +9,7 @@ namespace SystemUserService.BusinessLogic.Configuration
         public static void AddBussinessLogicServices(this IServiceCollection services)
         {
             services.AddScoped<IPermissionService, PermissionService>();
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
         }
     }
 }

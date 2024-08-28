@@ -9,7 +9,6 @@ namespace SystemUserService.DataAccess.Configuration
         public static void AddDataAccessServices(this IServiceCollection services)
         {
             services.AddScoped<IPermissionsRepository, PermissionsRepository>();
-            services.AddScoped<IUsersRepository, UsersRepository>();
         }
     }
 }
