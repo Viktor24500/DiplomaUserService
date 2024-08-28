@@ -16,8 +16,4 @@
     <ProjectReference Include="..\SystemUserService.Common\SystemUserService.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTO\Users\" />
-  </ItemGroup>
-
 </Project>

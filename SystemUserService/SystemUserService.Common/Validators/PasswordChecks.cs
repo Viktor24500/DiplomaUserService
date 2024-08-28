@@ -9,7 +9,7 @@ namespace SystemUserService.Common.Validators
     public class PasswordChecks
     {
         private ILogger<PasswordChecks> _logger;
-        PasswordChecks(ILogger<PasswordChecks> logger)
+        public PasswordChecks(ILogger<PasswordChecks> logger)
         {
             _logger = logger;
         }

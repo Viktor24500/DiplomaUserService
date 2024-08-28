@@ -1,0 +1,429 @@
+﻿using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
+using System.Data;
+using SystemUserService.Common.Results;
+using SystemUserService.DataAccess.DTO.Users;
+using SystemUserService.DataAccess.Repositories.Intefaces;
+using SystemUserService.Common.Enums;
+
+namespace SystemUserService.DataAccess.Repositories
+{
+    public class UsersRepository : IUsersRepository
+    {
+        private readonly string? _connectionString;
+        public UsersRepository(IConfiguration configuration)
+        {
+            _connectionString = configuration.GetConnectionString(Constants.MainConnectionString);
+        }
+
+        public async Task<Result<UserDTO>> CreateUser(string username, string userPassword, string email, string firstName, string lastName, string? fatherName, DateTime dateRegistered, DateTime? lastLogin, bool isActive)
+        {
+            await using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                Result<UserDTO> result = new Result<UserDTO>();
+                connection.Open();
+                SqlCommand command = new SqlCommand("insertUser", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@username", username);
+                command.Parameters.AddWithValue("@userPassword", userPassword);
+                command.Parameters.AddWithValue("@email", email);
+                command.Parameters.AddWithValue("@firstName", firstName);
+                command.Parameters.AddWithValue("@lastName", lastName);
+                if (fatherName != null)
+                {
+                    command.Parameters.AddWithValue("@fatherName", fatherName);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@fatherName", DBNull.Value);
+                }
+                command.Parameters.AddWithValue("@dateRegistered", dateRegistered);
+                if (lastLogin != null)
+                {
+                    command.Parameters.AddWithValue("@lastLogin", lastLogin);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@lastLogin", DBNull.Value);
+                }
+                command.Parameters.AddWithValue("@isActive", isActive);
+                await using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+                        {
+                            fatherName = null;
+                        }
+                        else
+                        {
+                            fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+                        }
+                        if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
+                        {
+                            lastLogin = null;
+                        }
+                        else
+                        {
+                            lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
+                        }
+                        result.Data = new UserDTO(
+                            reader.GetInt32(reader.GetOrdinal("userId")),
+                            reader.GetString(reader.GetOrdinal("username")),
+                            reader.GetString(reader.GetOrdinal("userPassword")),
+                            reader.GetString(reader.GetOrdinal("email")),
+                            reader.GetString(reader.GetOrdinal("firstName")),
+                            reader.GetString(reader.GetOrdinal("lastName")),
+                            fatherName,
+                            reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
+                            lastLogin,
+                            reader.GetBoolean(reader.GetOrdinal("isActive"))
+                            );
+                    }
+                    if (result.Data == null)
+                    {
+                        result.ErrorCode = (int)ErrorCodes.NotFound;
+                        return result;
+                    }
+                    return result;
+                }
+            }
+        }
+
+        public async Task<Result<List<UserDTO>>> GetAllUsers()
+        {
+            await using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("getAllUsers", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                await using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    Result<List<UserDTO>> result = new Result<List<UserDTO>>();
+                    result.Data = new List<UserDTO>();
+                    while (reader.Read())
+                    {
+                        string? fatherName;
+                        if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+                        {
+                            fatherName = null;
+                        }
+                        else
+                        {
+                            fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+                        }
+                        DateTime? lastLogin;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
+                        {
+                            lastLogin = null;
+                        }
+                        else
+                        {
+                            lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
+                        }
+                        UserDTO user = new UserDTO(
+                            reader.GetInt32(reader.GetOrdinal("userId")),
+                            reader.GetString(reader.GetOrdinal("username")),
+                            reader.GetString(reader.GetOrdinal("userPassword")),
+                            reader.GetString(reader.GetOrdinal("email")),
+                            reader.GetString(reader.GetOrdinal("firstName")),
+                            reader.GetString(reader.GetOrdinal("lastName")),
+                            fatherName,
+                            reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
+                            lastLogin,
+                            reader.GetBoolean(reader.GetOrdinal("isActive"))
+                            );
+                        result.Data.Add(user);
+                    }
+                    return result;
+                }
+            }
+        }
+
+        public async Task<Result<UserDTO>> GetUser(int id)
+        {
+            await using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("getUserById", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@id", id);
+                await using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    Result<UserDTO> result = new Result<UserDTO>();
+                    while (reader.Read())
+                    {
+                        string? fatherName;
+                        if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+                        {
+                            fatherName = null;
+                        }
+                        else
+                        {
+                            fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+                        }
+                        DateTime? lastLogin;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
+                        {
+                            lastLogin = null;
+                        }
+                        else
+                        {
+                            lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
+                        }
+                        result.Data = new UserDTO(
+                            reader.GetInt32(reader.GetOrdinal("userId")),
+                            reader.GetString(reader.GetOrdinal("username")),
+                            reader.GetString(reader.GetOrdinal("userPassword")),
+                            reader.GetString(reader.GetOrdinal("email")),
+                            reader.GetString(reader.GetOrdinal("firstName")),
+                            reader.GetString(reader.GetOrdinal("lastName")),
+                            fatherName,
+                            reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
+                            lastLogin,
+                            reader.GetBoolean(reader.GetOrdinal("isActive"))
+                            );
+                    }
+                    if (result.Data == null)
+                    {
+                        result.ErrorCode = (int)ErrorCodes.NotFound;
+                        return result;
+                    }
+                    return result;
+                }
+            }
+        }
+
+        public async Task<Result<UserDTO>> GetUserByEmail(string email)
+        {
+            await using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("getUserByEmail", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@email", email);
+                await using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    Result<UserDTO> result = new Result<UserDTO>();
+                    while (reader.Read())
+                    {
+                        string? fatherName;
+                        if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+                        {
+                            fatherName = null;
+                        }
+                        else
+                        {
+                            fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+                        }
+                        DateTime? lastLogin;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
+                        {
+                            lastLogin = null;
+                        }
+                        else
+                        {
+                            lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
+                        }
+                        result.Data = new UserDTO(
+                            reader.GetInt32(reader.GetOrdinal("userId")),
+                            reader.GetString(reader.GetOrdinal("username")),
+                            reader.GetString(reader.GetOrdinal("userPassword")),
+                            reader.GetString(reader.GetOrdinal("email")),
+                            reader.GetString(reader.GetOrdinal("firstName")),
+                            reader.GetString(reader.GetOrdinal("lastName")),
+                            fatherName,
+                            reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
+                            lastLogin,
+                            reader.GetBoolean(reader.GetOrdinal("isActive"))
+                            );
+                    }
+                    if (result.Data == null)
+                    {
+                        result.ErrorCode = (int)ErrorCodes.NotFound;
+                        return result;
+                    }
+                    return result;
+                }
+            }
+        }
+
+        public async Task<Result<List<UserDTO>>> GetUserByIsActive(bool isActive)
+        {
+            await using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("getUserByIsActive", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@isActive", isActive);
+                await using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    Result<List<UserDTO>> result = new Result<List<UserDTO>>();
+                    result.Data = new List<UserDTO>();
+                    while (reader.Read())
+                    {
+                        string? fatherName;
+                        if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+                        {
+                            fatherName = null;
+                        }
+                        else
+                        {
+                            fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+                        }
+                        DateTime? lastLogin;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
+                        {
+                            lastLogin = null;
+                        }
+                        else
+                        {
+                            lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
+                        }
+                        UserDTO user = new UserDTO(
+                            reader.GetInt32(reader.GetOrdinal("userId")),
+                            reader.GetString(reader.GetOrdinal("username")),
+                            reader.GetString(reader.GetOrdinal("userPassword")),
+                            reader.GetString(reader.GetOrdinal("email")),
+                            reader.GetString(reader.GetOrdinal("firstName")),
+                            reader.GetString(reader.GetOrdinal("lastName")),
+                            fatherName,
+                            reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
+                            lastLogin,
+                            reader.GetBoolean(reader.GetOrdinal("isActive"))
+                            );
+                        result.Data.Add(user);
+                    }
+                    return result;
+                }
+            }
+        }
+
+        public async Task<Result<UserDTO>> GetUserByName(string name)
+        {
+            await using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("getUserByUsername", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@username", name);
+                await using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    Result<UserDTO> result = new Result<UserDTO>();
+                    while (reader.Read())
+                    {
+                        string? fatherName;
+                        if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+                        {
+                            fatherName = null;
+                        }
+                        else
+                        {
+                            fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+                        }
+                        DateTime? lastLogin;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
+                        {
+                            lastLogin = null;
+                        }
+                        else
+                        {
+                            lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
+                        }
+                        result.Data = new UserDTO(
+                            reader.GetInt32(reader.GetOrdinal("userId")),
+                            reader.GetString(reader.GetOrdinal("username")),
+                            reader.GetString(reader.GetOrdinal("userPassword")),
+                            reader.GetString(reader.GetOrdinal("email")),
+                            reader.GetString(reader.GetOrdinal("firstName")),
+                            reader.GetString(reader.GetOrdinal("lastName")),
+                            fatherName,
+                            reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
+                            lastLogin,
+                            reader.GetBoolean(reader.GetOrdinal("isActive"))
+                            );
+                    }
+                    if (result.Data == null)
+                    {
+                        result.ErrorCode = (int)ErrorCodes.NotFound;
+                        return result;
+                    }
+                    return result;
+                }
+            }
+        }
+
+        public async Task<Result<UserDTO>> UpdateUser(int id, string email, string firstName, string lastName, string? fatherName, bool isActive)
+        {
+            await using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                Result<UserDTO> result = new Result<UserDTO>();
+                connection.Open();
+
+                SqlCommand command = new SqlCommand("updateUser", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@email", email);
+                command.Parameters.AddWithValue("@firstName", firstName);
+                command.Parameters.AddWithValue("@lastName", lastName);
+                if (fatherName != null)
+                {
+                    command.Parameters.AddWithValue("@fatherName", fatherName);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@fatherName", DBNull.Value);
+                }
+                command.Parameters.AddWithValue("@isActive", isActive);
+
+                if (command.ExecuteNonQuery() <= 0)
+                {
+                    result.ErrorCode = (int)ErrorCodes.NotFound;
+                    result.ErrorMessage = $"User with {id} not found";
+                    return result;
+                }
+                await using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+                        {
+                            fatherName = null;
+                        }
+                        else
+                        {
+                            fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+                        }
+                        DateTime? lastLogin;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
+                        {
+                            lastLogin = null;
+                        }
+                        else
+                        {
+                            lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
+                        }
+                        result.Data = new UserDTO(
+                            reader.GetInt32(reader.GetOrdinal("userId")),
+                            reader.GetString(reader.GetOrdinal("username")),
+                            reader.GetString(reader.GetOrdinal("userPassword")),
+                            reader.GetString(reader.GetOrdinal("email")),
+                            reader.GetString(reader.GetOrdinal("firstName")),
+                            reader.GetString(reader.GetOrdinal("lastName")),
+                            fatherName,
+                            reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
+                            lastLogin,
+                            reader.GetBoolean(reader.GetOrdinal("isActive"))
+                            );
+                    }
+                    if (result.Data == null)
+                    {
+                        result.ErrorCode = (int)ErrorCodes.NotFound;
+                        return result;
+                    }
+                    return result;
+                }
+            }
+        }
+    }
+}

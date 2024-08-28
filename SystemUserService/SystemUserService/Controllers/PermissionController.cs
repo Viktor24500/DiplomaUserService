@@ -52,7 +52,7 @@ namespace SystemUserService.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePermission(string name)
         {
-            Result<Permission> result = await _permissionService.CreatPermission(name);
+            Result<Permission> result = await _permissionService.CreatePermission(name);
             if (result.ErrorCode == (int)ErrorCodes.Conflict)
             {
                 return Conflict(result.ErrorMessage);

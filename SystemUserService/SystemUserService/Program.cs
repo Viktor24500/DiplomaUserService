@@ -1,6 +1,5 @@
 
 using SystemUserService.BusinessLogic.Configuration;
-using SystemUserService.Common.Validators;
 using SystemUserService.DataAccess.Configuration;
 
 namespace SystemUserService
@@ -21,7 +20,6 @@ namespace SystemUserService
             //add
             builder.Services.AddDataAccessServices();
             builder.Services.AddBussinessLogicServices();
-            builder.Services.AddScoped<PasswordChecks>();
 
             var app = builder.Build();
 
