@@ -13,6 +13,7 @@ namespace SystemUserService.BusinessLogic.Configuration
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IRolePermissionsService, RolePermissionsService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserRoleService, UserRoleService>();
             services.AddScoped<PasswordChecks>();
         }
     }
