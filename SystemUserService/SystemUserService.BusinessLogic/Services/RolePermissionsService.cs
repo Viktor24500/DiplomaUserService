@@ -96,6 +96,15 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
+            Result<RoleDTO> repRoleResult = await _rolesRepository.GetRole(id);
+            if (repRoleResult.ErrorCode == (int)ErrorCodes.NotFound)
+            {
+                result.ErrorCode = (int)ErrorCodes.NotFound;
+                result.ErrorMessage = $"Role with id {id} not exist";
+                _logger.LogError(result.ErrorMessage);
+                return result;
+            }
+
             Result<List<RolePermissionsDTO>> repResult = await _rolesPermissionsRepository.GetRolePermissionsByRoleId(id);
             if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
             {
@@ -127,8 +136,8 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            Result<RoleDTO> repResult = await _rolesRepository.GetRole(roleId);
-            if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
+            Result<RoleDTO> repRoleResult = await _rolesRepository.GetRole(roleId);
+            if (repRoleResult.ErrorCode == (int)ErrorCodes.NotFound)
             {
                 result.ErrorCode = (int)ErrorCodes.NotFound;
                 result.ErrorMessage = $"Role with id {roleId} not exist";
@@ -145,8 +154,7 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            Result<PermissionDTO> repPermissionResult = new Result<PermissionDTO>();
-            repPermissionResult = await _permissionsRepository.GetPermission(permissionId);
+            Result<PermissionDTO> repPermissionResult = await _permissionsRepository.GetPermission(permissionId);
             if (repPermissionResult.ErrorCode == (int)ErrorCodes.NotFound)
             {
                 result.ErrorCode = (int)ErrorCodes.Conflict;
