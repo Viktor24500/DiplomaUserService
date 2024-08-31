@@ -33,7 +33,7 @@ namespace SystemUserService.BusinessLogic.Services
         {
             Result<List<UserRolePermissionDTO>> repResult = await _usersRolesPermissionsRepository.GetAllUserRolePermissions();
             Result<List<UserRolePermissions>> result = new Result<List<UserRolePermissions>>();
-            result.Data = repResult.Data.();
+            result.Data = repResult.Data.MapToUserRolePermissionsCollection();
             return result;
         }
 
@@ -64,7 +64,7 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            result.Data = repResult.Data.();
+            result.Data = repResult.Data.MapToUserRolePermissionsCollection();
             return result;
         }
 
@@ -95,7 +95,7 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            result.Data = repResult.Data.();
+            result.Data = repResult.Data.MapToUserRolePermissionsCollection();
             return result;
         }
 
@@ -126,7 +126,7 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            result.Data = repResult.Data.();
+            result.Data = repResult.Data.MapToUserRolePermissionsCollection();
             return result;
         }
     }

@@ -13,7 +13,7 @@ namespace SystemUserService.DataAccess.Configuration
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<IRolePermissionsRepository, RolePermissionsRepository>();
             services.AddScoped<IUserRoleRepository, UserRoleRepository>();
-            services.AddScoped<IUserRolePermissionsRepository, IUserRolePermissionsRepository>();
+            services.AddScoped<IUserRolePermissionsRepository, UserRolePermissionsRepository>();
         }
     }
 }

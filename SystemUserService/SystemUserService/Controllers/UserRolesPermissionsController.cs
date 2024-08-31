@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SystemUserService.BusinessLogic.Entities.UsersRolesPermissions;
+using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
 
