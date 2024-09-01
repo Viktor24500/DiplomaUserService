@@ -37,9 +37,13 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            repResult = await _rolesRepository.CreateRole(name, description);
-            result.Data = repResult.Data.MapToRole();
-            return result;
+
+            ResultValueType<int> repCreateResult = await _rolesRepository.CreateRole(name, description);
+            if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
+            {
+                repResult = await _rolesRepository.GetRole(repCreateResult.Data);
+                result.Data = repResult.Data.MapToRole();
+            }
         }
 
         public async Task<Result<List<Role>>> GetAllRoles()
@@ -101,15 +105,20 @@ namespace SystemUserService.BusinessLogic.Services
                 }
             }
 
-            repResult = await _rolesRepository.UpdateRole(id, name, description);
-            if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
+            Result repUpdateResult = await _rolesRepository.UpdateRole(id, name, description);
+            if (repUpdateResult.ErrorCode == (int)ErrorCodes.Success)
             {
-                result.ErrorCode = (int)ErrorCodes.NotFound;
-                result.ErrorMessage = $"Role with {id} not exist";
-                _logger.LogError(result.ErrorMessage);
+                repResult = await _rolesRepository.GetRole(id);
+                if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
+                {
+                    result.ErrorCode = (int)ErrorCodes.NotFound;
+                    result.ErrorMessage = $"User with item {id} not exist";
+                    _logger.LogError(result.ErrorMessage);
+                    return result;
+                }
+                result.Data = repResult.Data.MapToRole();
                 return result;
             }
-            result.Data = repResult.Data.MapToRole();
             return result;
         }
     }

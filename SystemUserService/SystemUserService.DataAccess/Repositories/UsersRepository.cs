@@ -16,11 +16,11 @@ namespace SystemUserService.DataAccess.Repositories
             _connectionString = configuration.GetConnectionString(Constants.MainConnectionString);
         }
 
-        public async Task<Result<UserDTO>> CreateUser(string username, string userPassword, string email, string firstName, string lastName, string? fatherName, DateTime dateRegistered, DateTime? lastLogin, bool isActive)
+        public async Task<ResultValueType<int>> CreateUser(string username, string userPassword, string email, string firstName, string lastName, string? fatherName, DateTime dateRegistered, DateTime? lastLogin, string? lastToken, bool isActive)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                Result<UserDTO> result = new Result<UserDTO>();
+                ResultValueType<int> result = new ResultValueType<int>();
                 connection.Open();
                 SqlCommand command = new SqlCommand("insertUser", connection);
                 command.CommandType = CommandType.StoredProcedure;
@@ -46,39 +46,20 @@ namespace SystemUserService.DataAccess.Repositories
                 {
                     command.Parameters.AddWithValue("@lastLogin", DBNull.Value);
                 }
+                if (lastToken != null)
+                {
+                    command.Parameters.AddWithValue("@lastToken", lastToken);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@lastToken", DBNull.Value);
+                }
                 command.Parameters.AddWithValue("@isActive", isActive);
                 await using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
-                        {
-                            fatherName = null;
-                        }
-                        else
-                        {
-                            fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
-                        }
-                        if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
-                        {
-                            lastLogin = null;
-                        }
-                        else
-                        {
-                            lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
-                        }
-                        result.Data = new UserDTO(
-                            reader.GetInt32(reader.GetOrdinal("userId")),
-                            reader.GetString(reader.GetOrdinal("username")),
-                            reader.GetString(reader.GetOrdinal("userPassword")),
-                            reader.GetString(reader.GetOrdinal("email")),
-                            reader.GetString(reader.GetOrdinal("firstName")),
-                            reader.GetString(reader.GetOrdinal("lastName")),
-                            fatherName,
-                            reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
-                            lastLogin,
-                            reader.GetBoolean(reader.GetOrdinal("isActive"))
-                            );
+                        result.Data = reader.GetInt32(reader.GetOrdinal("userId"));
                     }
                     if (result.Data == null)
                     {
@@ -121,6 +102,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
                         }
+                        string? lastToken;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
+                        {
+                            lastToken = null;
+                        }
+                        else
+                        {
+                            lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
+                        }
                         UserDTO user = new UserDTO(
                             reader.GetInt32(reader.GetOrdinal("userId")),
                             reader.GetString(reader.GetOrdinal("username")),
@@ -131,6 +121,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                             );
                         result.Data.Add(user);
@@ -171,6 +162,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
                         }
+                        string? lastToken;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
+                        {
+                            lastToken = null;
+                        }
+                        else
+                        {
+                            lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
+                        }
                         result.Data = new UserDTO(
                             reader.GetInt32(reader.GetOrdinal("userId")),
                             reader.GetString(reader.GetOrdinal("username")),
@@ -181,6 +181,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                             );
                     }
@@ -225,6 +226,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
                         }
+                        string? lastToken;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
+                        {
+                            lastToken = null;
+                        }
+                        else
+                        {
+                            lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
+                        }
                         result.Data = new UserDTO(
                             reader.GetInt32(reader.GetOrdinal("userId")),
                             reader.GetString(reader.GetOrdinal("username")),
@@ -235,6 +245,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                             );
                     }
@@ -280,6 +291,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
                         }
+                        string? lastToken;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
+                        {
+                            lastToken = null;
+                        }
+                        else
+                        {
+                            lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
+                        }
                         UserDTO user = new UserDTO(
                             reader.GetInt32(reader.GetOrdinal("userId")),
                             reader.GetString(reader.GetOrdinal("username")),
@@ -290,6 +310,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                             );
                         result.Data.Add(user);
@@ -330,6 +351,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
                         }
+                        string? lastToken;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
+                        {
+                            lastToken = null;
+                        }
+                        else
+                        {
+                            lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
+                        }
                         result.Data = new UserDTO(
                             reader.GetInt32(reader.GetOrdinal("userId")),
                             reader.GetString(reader.GetOrdinal("username")),
@@ -340,6 +370,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                             );
                     }
@@ -353,11 +384,11 @@ namespace SystemUserService.DataAccess.Repositories
             }
         }
 
-        public async Task<Result<UserDTO>> UpdateUser(int id, string email, string firstName, string lastName, string? fatherName, bool isActive)
+        public async Task<Result> UpdateUser(int id, string email, string firstName, string lastName, string? fatherName, bool isActive)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                Result<UserDTO> result = new Result<UserDTO>();
+                Result result = new Result();
                 connection.Open();
 
                 SqlCommand command = new SqlCommand("updateUser", connection);
@@ -382,47 +413,7 @@ namespace SystemUserService.DataAccess.Repositories
                     result.ErrorMessage = $"User with {id} not found";
                     return result;
                 }
-                await using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
-                        {
-                            fatherName = null;
-                        }
-                        else
-                        {
-                            fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
-                        }
-                        DateTime? lastLogin;
-                        if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
-                        {
-                            lastLogin = null;
-                        }
-                        else
-                        {
-                            lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
-                        }
-                        result.Data = new UserDTO(
-                            reader.GetInt32(reader.GetOrdinal("userId")),
-                            reader.GetString(reader.GetOrdinal("username")),
-                            reader.GetString(reader.GetOrdinal("userPassword")),
-                            reader.GetString(reader.GetOrdinal("email")),
-                            reader.GetString(reader.GetOrdinal("firstName")),
-                            reader.GetString(reader.GetOrdinal("lastName")),
-                            fatherName,
-                            reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
-                            lastLogin,
-                            reader.GetBoolean(reader.GetOrdinal("isActive"))
-                            );
-                    }
-                    if (result.Data == null)
-                    {
-                        result.ErrorCode = (int)ErrorCodes.NotFound;
-                        return result;
-                    }
-                    return result;
-                }
+                return result;
             }
         }
     }

@@ -9,14 +9,14 @@ namespace SystemUserService.BusinessLogic.Extensions
         {
             return new User(userDTO.UserId, userDTO.Username, userDTO.UserPassword, userDTO.Email,
                 userDTO.FirstName, userDTO.LastName, userDTO.FatherName, userDTO.DateRegistered,
-                userDTO.LastLogin, userDTO.IsActive);
+                userDTO.LastLogin, userDTO.IsActive, userDTO.LastToken);
         }
         public static List<User> MapToUsersCollection(this List<UserDTO> userDTOList)
         {
             IEnumerable<User> users = from userDTO in userDTOList
                                       select new User(userDTO.UserId, userDTO.Username, userDTO.UserPassword, userDTO.Email,
                 userDTO.FirstName, userDTO.LastName, userDTO.FatherName, userDTO.DateRegistered,
-                userDTO.LastLogin, userDTO.IsActive);
+                userDTO.LastLogin, userDTO.IsActive, userDTO.LastToken);
             return users.ToList();
         }
     }

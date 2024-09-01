@@ -16,7 +16,7 @@ namespace SystemUserService.DataAccess.Repositories
         {
             _connectionString = configuration.GetConnectionString(Constants.MainConnectionString);
         }
-        public async Task<Result<PermissionDTO>> CreatePermission(string name, string? description)
+        public async Task<ResultValueType<int>> CreatePermission(string name, string? description)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -35,22 +35,10 @@ namespace SystemUserService.DataAccess.Repositories
                 }
                 await using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    Result<PermissionDTO> result = new Result<PermissionDTO>();
+                    ResultValueType<int> result = new ResultValueType<int>();
                     while (reader.Read())
                     {
-                        if (reader.IsDBNull(reader.GetOrdinal("permissionDescription")))
-                        {
-                            description = null;
-                        }
-                        else
-                        {
-                            description = reader.GetString(reader.GetOrdinal("permissionDescription"));
-                        }
-                        result.Data = new PermissionDTO(
-                            reader.GetInt32(reader.GetOrdinal("permissionId")),
-                            reader.GetString(reader.GetOrdinal("permissionName")),
-                            description
-                            );
+                        result.Data = reader.GetInt32(reader.GetOrdinal("permissionId"));
                     }
                     return result;
                 }
@@ -173,7 +161,7 @@ namespace SystemUserService.DataAccess.Repositories
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                Result<PermissionDTO> result = new Result<PermissionDTO>();
+                Result result = new Result();
                 connection.Open();
 
                 SqlCommand command = new SqlCommand("updatePermission", connection);
@@ -195,28 +183,9 @@ namespace SystemUserService.DataAccess.Repositories
                     result.ErrorMessage = $"Permission with {id} not found";
                     return result;
                 }
-                await using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        if (reader.IsDBNull(reader.GetOrdinal("permissionDescription")))
-                        {
-                            description = null;
-                        }
-                        else
-                        {
-                            description = reader.GetString(reader.GetOrdinal("permissionDescription"));
-                        }
-                        result.Data = new PermissionDTO(
-                            reader.GetInt32(reader.GetOrdinal("permissionId")),
-                            reader.GetString(reader.GetOrdinal("permissionName")),
-                            description
-                            );
-                    }
-                    result.ErrorCode = (int)ErrorCodes.Success;
-                    return result;
-                }
+                return result;
             }
         }
     }
+}
 }

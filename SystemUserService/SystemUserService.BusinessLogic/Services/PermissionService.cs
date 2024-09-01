@@ -37,8 +37,12 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            repResult = await _permissionsRepository.CreatePermission(name, description);
-            result.Data = repResult.Data.MapToPermission();
+            ResultValueType<int> repCreateResult = await _permissionsRepository.CreatePermission(name, description);
+            if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
+            {
+                repResult = await _permissionsRepository.GetPermission(repCreateResult.Data);
+                result.Data = repResult.Data.MapToPermission();
+            }
             return result;
         }
 
@@ -102,15 +106,20 @@ namespace SystemUserService.BusinessLogic.Services
                 }
             }
 
-            repResult = await _permissionsRepository.UpdatePermission(id, name, description);
-            if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
+            Result repUpdateResult = await _permissionsRepository.UpdatePermission(id, name, description);
+            if (repUpdateResult.ErrorCode == (int)ErrorCodes.Success)
             {
-                result.ErrorCode = (int)ErrorCodes.NotFound;
-                result.ErrorMessage = $"Permission with {id} not exist";
-                _logger.LogError(result.ErrorMessage);
+                repResult = await _permissionsRepository.GetPermission(id);
+                if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
+                {
+                    result.ErrorCode = (int)ErrorCodes.NotFound;
+                    result.ErrorMessage = $"Permission with {id} not exist";
+                    _logger.LogError(result.ErrorMessage);
+                    return result;
+                }
+                result.Data = repResult.Data.MapToPermission();
                 return result;
             }
-            result.Data = repResult.Data.MapToPermission();
             return result;
         }
 

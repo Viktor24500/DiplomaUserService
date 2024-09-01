@@ -16,7 +16,7 @@ namespace SystemUserService.DataAccess.Repositories
             _connectionString = configuration.GetConnectionString(Constants.MainConnectionString);
         }
 
-        public async Task<Result<RoleDTO>> CreateRole(string name, string? description)
+        public async Task<ResultValueType<int>> CreateRole(string name, string? description)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -35,22 +35,10 @@ namespace SystemUserService.DataAccess.Repositories
                 }
                 await using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    Result<RoleDTO> result = new Result<RoleDTO>();
+                    ResultValueType<int> result = new ResultValueType<int>();
                     while (reader.Read())
                     {
-                        if (reader.IsDBNull(reader.GetOrdinal("roleDescription")))
-                        {
-                            description = null;
-                        }
-                        else
-                        {
-                            description = reader.GetString(reader.GetOrdinal("roleDescription"));
-                        }
-                        result.Data = new RoleDTO(
-                            reader.GetInt32(reader.GetOrdinal("roleId")),
-                            reader.GetString(reader.GetOrdinal("roleName")),
-                            description
-                            );
+                        result.Data = reader.GetInt32(reader.GetOrdinal("roleId"));
                     }
                     return result;
                 }
@@ -169,11 +157,11 @@ namespace SystemUserService.DataAccess.Repositories
             }
         }
 
-        public async Task<Result<RoleDTO>> UpdateRole(int id, string name, string? description)
+        public async Task<Result> UpdateRole(int id, string name, string? description)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                Result<RoleDTO> result = new Result<RoleDTO>();
+                Result result = new Result();
                 connection.Open();
                 SqlCommand command = new SqlCommand("updateRole", connection);
                 command.CommandType = CommandType.StoredProcedure;
@@ -194,28 +182,9 @@ namespace SystemUserService.DataAccess.Repositories
                     result.ErrorMessage = $"Role with {id} not found";
                     return result;
                 }
-                await using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        if (reader.IsDBNull(reader.GetOrdinal("roleDescription")))
-                        {
-                            description = null;
-                        }
-                        else
-                        {
-                            description = reader.GetString(reader.GetOrdinal("roleDescription"));
-                        }
-                        result.Data = new RoleDTO(
-                            reader.GetInt32(reader.GetOrdinal("roleId")),
-                            reader.GetString(reader.GetOrdinal("roleName")),
-                            description
-                            );
-                    }
-                    result.ErrorCode = (int)ErrorCodes.Success;
-                    return result;
-                }
+                return result;
             }
         }
     }
 }
+

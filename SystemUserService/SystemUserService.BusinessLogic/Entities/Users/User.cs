@@ -3,7 +3,7 @@
     public class User
     {
         public User(int userId, string username, string userPassword, string email, string firstName, string lastName,
-            string? fatherName, DateTime dateRegistered, DateTime? lastLogin, bool isActive)
+            string? fatherName, DateTime dateRegistered, DateTime? lastLogin, bool isActive, string? lastToken)
         {
             UserId = userId;
             Username = username;
@@ -15,6 +15,7 @@
             DateRegistered = dateRegistered;
             LastLogin = lastLogin;
             IsActive = isActive;
+            LastToken = lastToken;
         }
 
         public int UserId { get; set; }
@@ -26,6 +27,8 @@
         public string? FatherName { get; set; }
         public DateTime DateRegistered { get; set; }
         public DateTime? LastLogin { get; set; }
+
+        public string? LastToken { get; set; }
         public bool IsActive { get; set; }
     }
 }

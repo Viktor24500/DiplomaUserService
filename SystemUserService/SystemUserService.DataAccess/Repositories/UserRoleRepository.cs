@@ -94,6 +94,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             roleDescription = reader.GetString(reader.GetOrdinal("roleDescription"));
                         }
+                        string? lastToken;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
+                        {
+                            lastToken = null;
+                        }
+                        else
+                        {
+                            lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
+                        }
 
                         UserRoleDTO userRole = new UserRoleDTO(
                             reader.GetInt32(reader.GetOrdinal("userRoleId")),
@@ -111,6 +120,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                         );
 
@@ -164,6 +174,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             roleDescription = reader.GetString(reader.GetOrdinal("roleDescription"));
                         }
+                        string? lastToken;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
+                        {
+                            lastToken = null;
+                        }
+                        else
+                        {
+                            lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
+                        }
 
                         UserRoleDTO userRole = new UserRoleDTO(
                             reader.GetInt32(reader.GetOrdinal("userRoleId")),
@@ -181,6 +200,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                         );
 
@@ -234,6 +254,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             roleDescription = reader.GetString(reader.GetOrdinal("roleDescription"));
                         }
+                        string? lastToken;
+                        if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
+                        {
+                            lastToken = null;
+                        }
+                        else
+                        {
+                            lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
+                        }
 
                         UserRoleDTO userRole = new UserRoleDTO(
                             reader.GetInt32(reader.GetOrdinal("userRoleId")),
@@ -251,6 +280,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                         );
 

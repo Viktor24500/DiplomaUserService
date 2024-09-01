@@ -7,8 +7,8 @@ namespace SystemUserService.DataAccess.Repositories.Intefaces
     {
         Task<Result<List<PermissionDTO>>> GetAllPermissions();
         Task<Result<PermissionDTO>> GetPermission(int id);
-        Task<Result<PermissionDTO>> UpdatePermission(int id, string name, string? description);
-        Task<Result<PermissionDTO>> CreatePermission(string name, string? description);
+        Task<Result> UpdatePermission(int id, string name, string? description);
+        Task<ResultValueType<int>> CreatePermission(string name, string? description);
 
         Task<Result<PermissionDTO>> GetPermissionByName(string name);
     }

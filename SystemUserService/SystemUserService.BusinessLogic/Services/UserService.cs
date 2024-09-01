@@ -98,10 +98,14 @@ namespace SystemUserService.BusinessLogic.Services
                 }
                 hashedPassword = sb.ToString();
             }
-
-            repResult = await _usersRepository.CreateUser(username, hashedPassword, email, firstName, lastName, fatherName, dateRegistered,
-            lastLogin, isActive);
-            result.Data = repResult.Data.MapToUser();
+            string? lastToken = null;
+            ResultValueType<int> repCreateResult = await _usersRepository.CreateUser(username, hashedPassword, email, firstName, lastName, fatherName, dateRegistered,
+            lastLogin, lastToken, isActive);
+            if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
+            {
+                repResult = await _usersRepository.GetUser(repCreateResult.Data);
+                result.Data = repResult.Data.MapToUser();
+            }
             return result;
         }
 
@@ -203,15 +207,20 @@ namespace SystemUserService.BusinessLogic.Services
             }
 
 
-            repResult = await _usersRepository.UpdateUser(id, email, firstName, lastName, fatherName, isActive);
-            if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
+            Result repUpdateResult = await _usersRepository.UpdateUser(id, email, firstName, lastName, fatherName, isActive);
+            if (repUpdateResult.ErrorCode == (int)ErrorCodes.Success)
             {
-                result.ErrorCode = (int)ErrorCodes.NotFound;
-                result.ErrorMessage = $"Role with {id} not exist";
-                _logger.LogError(result.ErrorMessage);
+                repResult = await _usersRepository.GetUser(id);
+                if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
+                {
+                    result.ErrorCode = (int)ErrorCodes.NotFound;
+                    result.ErrorMessage = $"User with item {id} not exist";
+                    _logger.LogError(result.ErrorMessage);
+                    return result;
+                }
+                result.Data = repResult.Data.MapToUser();
                 return result;
             }
-            result.Data = repResult.Data.MapToUser();
             return result;
         }
     }

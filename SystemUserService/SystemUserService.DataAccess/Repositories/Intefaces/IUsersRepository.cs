@@ -9,10 +9,11 @@ namespace SystemUserService.DataAccess.Repositories.Intefaces
         Task<Result<UserDTO>> GetUser(int id);
         Task<Result<List<UserDTO>>> GetUserByIsActive(bool isActive);
         Task<Result<UserDTO>> GetUserByEmail(string email);
-        Task<Result<UserDTO>> UpdateUser(int id, string email, string firstName, string lastName, string? fatherName, bool isActive);
-        Task<Result<UserDTO>> CreateUser(string username, string userPassword, string email,
-                       string firstName, string lastName, string? fatherName,
-                       DateTime dateRegistered, DateTime? lastLogin, bool isActive);
+        Task<Result> UpdateUser(int id, string email, string firstName,
+            string lastName, string? fatherName, bool isActive);
+        Task<ResultValueType<int>> CreateUser(string username, string userPassword,
+            string email, string firstName, string lastName, string? fatherName,
+            DateTime dateRegistered, DateTime? lastLogin, string? lastToken, bool isActive);
 
         Task<Result<UserDTO>> GetUserByName(string name);
     }
