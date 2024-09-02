@@ -13,7 +13,7 @@ namespace SystemUserService.BusinessLogic.Extensions
             var role = new Role(dto.RoleId, dto.RoleName, dto.RoleDescription);
             var user = new User(dto.UserId, dto.Username, dto.UserPassword, dto.Email,
                 dto.FirstName, dto.LastName, dto.FatherName, dto.DateRegistered,
-                dto.LastLogin, dto.IsActive, dto.LastToken);
+                dto.LastLogin, dto.TokenExpiration, dto.IsActive, dto.LastToken);
             var permission = new Permission(dto.PermissionId, dto.PermissionName, dto.PermissionDescription);
 
             return new UserRolePermissions(
@@ -37,7 +37,7 @@ namespace SystemUserService.BusinessLogic.Extensions
                 Role role = new Role(dto.RoleId, dto.RoleName, dto.RoleDescription);
                 User user = new User(dto.UserId, dto.Username,
                     dto.UserPassword, dto.Email, dto.FirstName, dto.LastName,
-                    dto.FatherName, dto.DateRegistered, dto.LastLogin, dto.IsActive, dto.LastToken);
+                    dto.FatherName, dto.DateRegistered, dto.LastLogin, dto.TokenExpiration, dto.IsActive, dto.LastToken);
                 Permission permission = new Permission(dto.PermissionId, dto.PermissionName, dto.PermissionDescription);
 
                 // Map the DTO to a UserRolePermissions object

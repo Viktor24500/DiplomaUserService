@@ -16,11 +16,13 @@ namespace SystemUserService.DataAccess.Repositories
             _connectionString = configuration.GetConnectionString(Constants.MainConnectionString);
         }
 
-        public async Task<ResultValueType<int>> CreateUser(string username, string userPassword, string email, string firstName, string lastName, string? fatherName, DateTime dateRegistered, DateTime? lastLogin, string? lastToken, bool isActive)
+        public async Task<Result<int>> CreateUser(string username, string userPassword, string email, string firstName, string lastName,
+            string? fatherName, DateTime dateRegistered, DateTime? lastLogin, string? lastToken, DateTime? tokenExpiration,
+            bool isActive)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                ResultValueType<int> result = new ResultValueType<int>();
+                Result<int> result = new Result<int>();
                 connection.Open();
                 SqlCommand command = new SqlCommand("insertUser", connection);
                 command.CommandType = CommandType.StoredProcedure;
@@ -45,6 +47,14 @@ namespace SystemUserService.DataAccess.Repositories
                 else
                 {
                     command.Parameters.AddWithValue("@lastLogin", DBNull.Value);
+                }
+                if (tokenExpiration != null)
+                {
+                    command.Parameters.AddWithValue("@tokenExpiration", lastLogin);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@tokenExpiration", DBNull.Value);
                 }
                 if (lastToken != null)
                 {
@@ -102,6 +112,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
                         }
+                        DateTime? tokenExpiration;
+                        if (reader.IsDBNull(reader.GetOrdinal("tokenExpiration")))
+                        {
+                            tokenExpiration = null;
+                        }
+                        else
+                        {
+                            tokenExpiration = reader.GetDateTime(reader.GetOrdinal("tokenExpiration"));
+                        }
                         string? lastToken;
                         if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
                         {
@@ -122,6 +141,7 @@ namespace SystemUserService.DataAccess.Repositories
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
                             lastToken,
+                            tokenExpiration,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                             );
                         result.Data.Add(user);
@@ -162,6 +182,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
                         }
+                        DateTime? tokenExpiration;
+                        if (reader.IsDBNull(reader.GetOrdinal("tokenExpiration")))
+                        {
+                            tokenExpiration = null;
+                        }
+                        else
+                        {
+                            tokenExpiration = reader.GetDateTime(reader.GetOrdinal("tokenExpiration"));
+                        }
                         string? lastToken;
                         if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
                         {
@@ -182,6 +211,7 @@ namespace SystemUserService.DataAccess.Repositories
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
                             lastToken,
+                            tokenExpiration,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                             );
                     }
@@ -226,6 +256,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
                         }
+                        DateTime? tokenExpiration;
+                        if (reader.IsDBNull(reader.GetOrdinal("tokenExpiration")))
+                        {
+                            tokenExpiration = null;
+                        }
+                        else
+                        {
+                            tokenExpiration = reader.GetDateTime(reader.GetOrdinal("tokenExpiration"));
+                        }
                         string? lastToken;
                         if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
                         {
@@ -246,6 +285,7 @@ namespace SystemUserService.DataAccess.Repositories
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
                             lastToken,
+                            tokenExpiration,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                             );
                     }
@@ -291,6 +331,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
                         }
+                        DateTime? tokenExpiration;
+                        if (reader.IsDBNull(reader.GetOrdinal("tokenExpiration")))
+                        {
+                            tokenExpiration = null;
+                        }
+                        else
+                        {
+                            tokenExpiration = reader.GetDateTime(reader.GetOrdinal("tokenExpiration"));
+                        }
                         string? lastToken;
                         if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
                         {
@@ -311,6 +360,7 @@ namespace SystemUserService.DataAccess.Repositories
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
                             lastToken,
+                            tokenExpiration,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                             );
                         result.Data.Add(user);
@@ -351,6 +401,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastLogin = reader.GetDateTime(reader.GetOrdinal("lastLogin"));
                         }
+                        DateTime? tokenExpiration;
+                        if (reader.IsDBNull(reader.GetOrdinal("tokenExpiration")))
+                        {
+                            tokenExpiration = null;
+                        }
+                        else
+                        {
+                            tokenExpiration = reader.GetDateTime(reader.GetOrdinal("tokenExpiration"));
+                        }
                         string? lastToken;
                         if (reader.IsDBNull(reader.GetOrdinal("lastToken")))
                         {
@@ -371,6 +430,7 @@ namespace SystemUserService.DataAccess.Repositories
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
                             lastToken,
+                            tokenExpiration,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                             );
                     }
@@ -381,6 +441,51 @@ namespace SystemUserService.DataAccess.Repositories
                     }
                     return result;
                 }
+            }
+        }
+
+        public async Task<Result> UpdateLoginUser(int id, DateTime? lastLogin, string? lastToken, DateTime? tokenExpiration)
+        {
+            await using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                Result result = new Result();
+                connection.Open();
+
+                SqlCommand command = new SqlCommand("updateLoginUser", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@id", id);
+                if (lastLogin != null)
+                {
+                    command.Parameters.AddWithValue("@lastLogin", lastLogin);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@lastLogin", DBNull.Value);
+                }
+                if (tokenExpiration != null)
+                {
+                    command.Parameters.AddWithValue("@tokenExpiration", lastLogin);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@tokenExpiration", DBNull.Value);
+                }
+                if (lastToken != null)
+                {
+                    command.Parameters.AddWithValue("@lastToken", lastToken);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@lastToken", DBNull.Value);
+                }
+
+                if (command.ExecuteNonQuery() <= 0)
+                {
+                    result.ErrorCode = (int)ErrorCodes.NotFound;
+                    result.ErrorMessage = $"User with {id} not found";
+                    return result;
+                }
+                return result;
             }
         }
 

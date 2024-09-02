@@ -103,7 +103,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
                         }
-
+                        DateTime? tokenExpiration;
+                        if (reader.IsDBNull(reader.GetOrdinal("tokenExpiration")))
+                        {
+                            tokenExpiration = null;
+                        }
+                        else
+                        {
+                            tokenExpiration = reader.GetDateTime(reader.GetOrdinal("tokenExpiration"));
+                        }
                         UserRoleDTO userRole = new UserRoleDTO(
                             reader.GetInt32(reader.GetOrdinal("userRoleId")),
                             reader.GetInt32(reader.GetOrdinal("userRolesUserId")),
@@ -120,6 +128,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            tokenExpiration,
                             lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                         );
@@ -183,7 +192,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
                         }
-
+                        DateTime? tokenExpiration;
+                        if (reader.IsDBNull(reader.GetOrdinal("tokenExpiration")))
+                        {
+                            tokenExpiration = null;
+                        }
+                        else
+                        {
+                            tokenExpiration = reader.GetDateTime(reader.GetOrdinal("tokenExpiration"));
+                        }
                         UserRoleDTO userRole = new UserRoleDTO(
                             reader.GetInt32(reader.GetOrdinal("userRoleId")),
                             reader.GetInt32(reader.GetOrdinal("userRolesUserId")),
@@ -200,6 +217,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            tokenExpiration,
                             lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                         );
@@ -263,7 +281,15 @@ namespace SystemUserService.DataAccess.Repositories
                         {
                             lastToken = reader.GetString(reader.GetOrdinal("lastToken"));
                         }
-
+                        DateTime? tokenExpiration;
+                        if (reader.IsDBNull(reader.GetOrdinal("tokenExpiration")))
+                        {
+                            tokenExpiration = null;
+                        }
+                        else
+                        {
+                            tokenExpiration = reader.GetDateTime(reader.GetOrdinal("tokenExpiration"));
+                        }
                         UserRoleDTO userRole = new UserRoleDTO(
                             reader.GetInt32(reader.GetOrdinal("userRoleId")),
                             reader.GetInt32(reader.GetOrdinal("userRolesUserId")),
@@ -280,6 +306,7 @@ namespace SystemUserService.DataAccess.Repositories
                             fatherName,
                             reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
                             lastLogin,
+                            tokenExpiration,
                             lastToken,
                             reader.GetBoolean(reader.GetOrdinal("isActive"))
                         );

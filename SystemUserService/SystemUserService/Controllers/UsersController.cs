@@ -112,7 +112,22 @@ namespace SystemUserService.Controllers
             {
                 return Conflict(result.ErrorMessage);
             }
-            throw new Exception("Could not create user");
+            throw new Exception("Could not update user");
+        }
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login(string username, string userpassword)
+        {
+            Result<string> result = await _userService.LoginUser(username, userpassword);
+            if (result.ErrorCode == (int)ErrorCodes.Success)
+            {
+                return Ok(result.Data);
+            }
+            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+            throw new Exception("Could not login user");
         }
     }
 }

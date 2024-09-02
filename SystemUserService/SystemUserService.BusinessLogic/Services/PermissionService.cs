@@ -37,7 +37,7 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            ResultValueType<int> repCreateResult = await _permissionsRepository.CreatePermission(name, description);
+            Result<int> repCreateResult = await _permissionsRepository.CreatePermission(name, description);
             if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
             {
                 repResult = await _permissionsRepository.GetPermission(repCreateResult.Data);

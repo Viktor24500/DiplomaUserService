@@ -98,9 +98,10 @@ namespace SystemUserService.BusinessLogic.Services
                 }
                 hashedPassword = sb.ToString();
             }
-            string? lastToken = null;
-            ResultValueType<int> repCreateResult = await _usersRepository.CreateUser(username, hashedPassword, email, firstName, lastName, fatherName, dateRegistered,
-            lastLogin, lastToken, isActive);
+            string? lastToken = repResult.Data.LastToken;
+            DateTime? tokenExpiration = repResult.Data.TokenExpiration;
+            Result<int> repCreateResult = await _usersRepository.CreateUser(username, hashedPassword, email, firstName, lastName, fatherName, dateRegistered,
+            lastLogin, lastToken, tokenExpiration, isActive);
             if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
             {
                 repResult = await _usersRepository.GetUser(repCreateResult.Data);
@@ -166,6 +167,83 @@ namespace SystemUserService.BusinessLogic.Services
                 return result;
             }
             result.Data = repResult.Data.MapToUser();
+            return result;
+        }
+
+        public async Task<Result<string>> LoginUser(string name, string password)
+        {
+            Result<string> result = new Result<string>();
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
+            {
+                result.ErrorCode = (int)ErrorCodes.BadRequest;
+                result.ErrorMessage = "username and password can't be empty";
+                _logger.LogError(result.ErrorMessage);
+                return result;
+            }
+
+            Result<UserDTO> repResult = await _usersRepository.GetUserByName(name);
+            if (repResult.ErrorCode != (int)ErrorCodes.Success)
+            {
+                result.ErrorCode = (int)ErrorCodes.BadRequest;
+                result.ErrorMessage = "invalid username or password";
+                _logger.LogError(result.ErrorMessage);
+                return result;
+            }
+
+            //check password pattern
+            if (_passwordChecks.isPasswordValid(password).ErrorCode == (int)ErrorCodes.BadRequest)
+            {
+                result.ErrorCode = _passwordChecks.isPasswordValid(password).ErrorCode;
+                result.ErrorMessage = _passwordChecks.isPasswordValid(password).ErrorMessage;
+                _logger.LogError(result.ErrorMessage);
+                return result;
+            }
+
+            string hashedPassword;
+            //Hash password 
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // Convert the password to a byte array
+                byte[] bytes = Encoding.UTF8.GetBytes(password);
+
+                // Compute the hash
+                byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                // Convert the byte array to a hexadecimal string
+                StringBuilder sb = new StringBuilder();
+                foreach (byte b in hashBytes)
+                {
+                    sb.Append(b.ToString("x2")); // Converts byte to hexadecimal string
+                }
+                hashedPassword = sb.ToString();
+            }
+
+            if (repResult.Data.UserPassword != hashedPassword)
+            {
+                result.ErrorCode = (int)ErrorCodes.BadRequest;
+                result.ErrorMessage = "invalid username or password";
+                _logger.LogError(result.ErrorMessage);
+                return result;
+            }
+            string token = Guid.NewGuid().ToString();
+            DateTime lastLogin = DateTime.Now;
+            DateTime tokenExpiration = lastLogin.AddMinutes(30);
+
+            int userId = repResult.Data.UserId;
+            Result repUpdateLoginResult = await _usersRepository.UpdateLoginUser(userId, lastLogin, token, tokenExpiration);
+
+            if (repUpdateLoginResult.ErrorCode == (int)ErrorCodes.Success)
+            {
+                repResult = await _usersRepository.GetUser(userId);
+                if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
+                {
+                    result.ErrorCode = (int)ErrorCodes.NotFound;
+                    result.ErrorMessage = $"User with item {userId} not exist";
+                    _logger.LogError(result.ErrorMessage);
+                    return result;
+                }
+                result.Data = repResult.Data.LastToken;
+            }
             return result;
         }
 

@@ -20,7 +20,7 @@ namespace SystemUserService.BusinessLogic.Extensions
                 userRoleDTO.UserId, userRoleDTO.Username, userRoleDTO.UserPassword,
                 userRoleDTO.Email, userRoleDTO.FirstName, userRoleDTO.LastName,
                 userRoleDTO.FatherName, userRoleDTO.DateRegistered, userRoleDTO.LastLogin,
-                userRoleDTO.IsActive, userRoleDTO.LastToken
+                userRoleDTO.TokenExpiration, userRoleDTO.IsActive, userRoleDTO.LastToken
             );
 
             return new UserRole(
@@ -49,7 +49,7 @@ namespace SystemUserService.BusinessLogic.Extensions
                     dto.UserId, dto.Username, dto.UserPassword,
                     dto.Email, dto.FirstName, dto.LastName,
                     dto.FatherName, dto.DateRegistered, dto.LastLogin,
-                    dto.IsActive, dto.LastToken
+                     dto.TokenExpiration, dto.IsActive, dto.LastToken
                 );
 
                 // Map the DTO to a UserRole object

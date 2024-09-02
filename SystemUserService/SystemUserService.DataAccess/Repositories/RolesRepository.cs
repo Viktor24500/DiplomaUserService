@@ -16,7 +16,7 @@ namespace SystemUserService.DataAccess.Repositories
             _connectionString = configuration.GetConnectionString(Constants.MainConnectionString);
         }
 
-        public async Task<ResultValueType<int>> CreateRole(string name, string? description)
+        public async Task<Result<int>> CreateRole(string name, string? description)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -35,7 +35,7 @@ namespace SystemUserService.DataAccess.Repositories
                 }
                 await using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    ResultValueType<int> result = new ResultValueType<int>();
+                    Result<int> result = new Result<int>();
                     while (reader.Read())
                     {
                         result.Data = reader.GetInt32(reader.GetOrdinal("roleId"));

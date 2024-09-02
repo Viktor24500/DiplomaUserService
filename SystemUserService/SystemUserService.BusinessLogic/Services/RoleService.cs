@@ -38,12 +38,13 @@ namespace SystemUserService.BusinessLogic.Services
                 return result;
             }
 
-            ResultValueType<int> repCreateResult = await _rolesRepository.CreateRole(name, description);
+            Result<int> repCreateResult = await _rolesRepository.CreateRole(name, description);
             if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
             {
                 repResult = await _rolesRepository.GetRole(repCreateResult.Data);
                 result.Data = repResult.Data.MapToRole();
             }
+            return result;
         }
 
         public async Task<Result<List<Role>>> GetAllRoles()

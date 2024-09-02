@@ -14,5 +14,7 @@ namespace SystemUserService.BusinessLogic.Services.Interfaces
                        DateTime dateRegistered, DateTime? lastLogin, bool isActive);
 
         Task<Result<User>> GetUserByName(string name);
+
+        Task<Result<string>> LoginUser(string name, string password);
     }
 }
