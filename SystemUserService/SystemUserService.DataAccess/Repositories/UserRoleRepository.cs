@@ -324,36 +324,19 @@ namespace SystemUserService.DataAccess.Repositories
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlTransaction transaction = connection.BeginTransaction();
-                using (SqlCommand command = new SqlCommand("updateUserRole", connection, transaction))
+                SqlCommand command = new SqlCommand("updateUserRole", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                Result result = new Result();
+                command.Parameters.AddWithValue("@userRoleId", userRoleId);
+                command.Parameters.AddWithValue("@userId", userId);
+                command.Parameters.AddWithValue("@roleId", roleId);
+                if (await command.ExecuteNonQueryAsync() <= 0)
                 {
-                    //SqlCommand command = connection.CreateCommand();
-                    //command.Transaction = transaction;
-                    //command = new SqlCommand("insertRolesPermissions", connection);
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    Result result = new Result();
-                    try
-                    {
-
-                        command.Parameters.AddWithValue("@userRoleId", userRoleId);
-                        command.Parameters.AddWithValue("@userId", userId);
-                        command.Parameters.AddWithValue("@roleId", roleId);
-                        if (await command.ExecuteNonQueryAsync() <= 0)
-                        {
-                            result.ErrorCode = (int)ErrorCodes.InternalServerError;
-                            await transaction.RollbackAsync();
-                            return result;
-                        }
-                        await transaction.CommitAsync();
-                        return result;
-                    }
-                    catch (Exception ex)
-                    {
-                        await transaction.RollbackAsync();
-                        throw;
-                    }
+                    result.ErrorCode = (int)ErrorCodes.InternalServerError;
+                    return result;
                 }
+                return result;
             }
         }
     }
