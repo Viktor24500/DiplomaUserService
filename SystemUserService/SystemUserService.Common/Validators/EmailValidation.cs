@@ -8,7 +8,7 @@ namespace SystemUserService.Common.Validators
     public class EmailValidation
     {
         private ILogger<EmailValidation> _logger;
-        EmailValidation(ILogger<EmailValidation> logger)
+        public EmailValidation(ILogger<EmailValidation> logger)
         {
             _logger = logger;
         }
