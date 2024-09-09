@@ -10,14 +10,14 @@ namespace SystemUserService.BusinessLogic.Entities.RolesPermission
         {
             RolePermissionId = rolePermissionId;
             RoleId = rolePermissionroleId;
-            Role = new Role(roleId, roleName, roleDescription);
             PermissionId = rolePermissionPermissionId;
-            Permission = permissions;
+            Role = new Role(roleId, roleName, roleDescription);
+            Permissions = permissions;
         }
         public int RolePermissionId { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }
         public int PermissionId { get; set; }
-        public List<Permission> Permission { get; set; }
+        public List<Permission> Permissions { get; set; }
     }
 }

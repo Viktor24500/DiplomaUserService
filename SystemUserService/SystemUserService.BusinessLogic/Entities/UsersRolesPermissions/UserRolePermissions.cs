@@ -6,21 +6,22 @@ namespace SystemUserService.BusinessLogic.Entities.UsersRolesPermissions
 {
     public class UserRolePermissions
     {
-        public UserRolePermissions(int userRoleId, int userRolesUserId, int userRolesRoleId, Role role, User user, Permission permission)
+        public UserRolePermissions(int userRoleId, int userRolesUserId, int userRolesRoleId, List<Role> role, User user, List<Permission> permission)
         {
             UserRoleId = userRoleId;
             UserRolesUserId = userRolesUserId;
             UserRolesRoleId = userRolesRoleId;
-            Role = role;
             User = user;
+            Role = role;
             Permission = permission;
         }
 
         public int UserRoleId { get; set; }
         public int UserRolesUserId { get; set; }
         public int UserRolesRoleId { get; set; }
-        public Role Role { get; set; }
         public User User { get; set; }
-        public Permission Permission { get; set; }
+
+        public List<Role> Role { get; set; }
+        public List<Permission> Permission { get; set; }
     }
 }

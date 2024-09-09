@@ -10,13 +10,13 @@ namespace SystemUserService.BusinessLogic.Entities.UsersRoles
             UserRoleId = userRoleId;
             UserRolesUserId = userRolesUserId;
             UserRolesRoleId = userRolesRoleId;
-            Role = roles;
             User = user;
+            Roles = roles;
         }
         public int UserRoleId { get; set; }
         public int UserRolesUserId { get; set; }
         public int UserRolesRoleId { get; set; }
-        public List<Role> Role { get; set; }
         public User User { get; set; }
+        public List<Role> Roles { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SystemUserService.BusinessLogic.Entities.Permissions;
+using SystemUserService.BusinessLogic.Entities.Roles;
 using SystemUserService.BusinessLogic.Entities.RolesPermission;
 using SystemUserService.DataAccess.DTO.RolesPermissions;
 
@@ -28,34 +29,46 @@ namespace SystemUserService.BusinessLogic.Extensions
         }
         public static List<RolesPermission> MapToRolesPermissionsCollection(this List<RolePermissionsDTO> rolePermissionsDTOList)
         {
-            // Create a new list to hold the mapped RolesPermission objects
-            var rolesPermissionsList = new List<RolesPermission>();
+            List<RolesPermission> rolePermissionList = new List<RolesPermission>();
+            Dictionary<int, RolesPermission> rolesPermissionMap = new Dictionary<int, RolesPermission>();
 
-            // Iterate over each RolePermissionsDTO in the input list
-            foreach (var dto in rolePermissionsDTOList)
+            foreach (RolePermissionsDTO dto in rolePermissionsDTOList)
             {
-                // Create a list of Permission from the DTO's permission information
-                var permissions = new List<Permission>
-                {
-                    new Permission(dto.PermissionId, dto.PermissionName, dto.PermissionDescription)
-                    // Add more permissions if necessary
-                };
-
-                // Map the DTO to a RolesPermission object
-                var rolesPermission = new RolesPermission(
-                    dto.RolePermissionId,
-                    dto.RolePermissionRoleId,
-                    dto.RolePermissionPermissionId,
-                    dto.RoleId,
-                    dto.RoleName,
-                    dto.RoleDescription,
-                    permissions
+                Role role = new Role(
+                    dto.RoleId, dto.RoleName, dto.RoleDescription
                 );
 
-                // Add the mapped RolesPermission object to the list
-                rolesPermissionsList.Add(rolesPermission);
+                Permission permission = new Permission(
+                    dto.PermissionId, dto.PermissionName, dto.PermissionDescription
+                );
+
+                if (rolesPermissionMap.ContainsKey(dto.RolePermissionRoleId))
+                {
+                    rolesPermissionMap[dto.RolePermissionRoleId].Role = role;
+                    rolesPermissionMap[dto.RolePermissionRoleId].Permissions.Add(permission);
+                }
+                else
+                {
+                    List<Permission> permissions = new List<Permission> { permission };
+
+                    RolesPermission rolesPermission = new RolesPermission(
+                        dto.RolePermissionId,
+                        dto.RolePermissionRoleId,
+                        dto.RolePermissionPermissionId,
+                        dto.RoleId,
+                        dto.RoleName,
+                        dto.RoleDescription,
+                        permissions
+                    );
+
+                    rolesPermissionMap[dto.RolePermissionId] = rolesPermission;
+                }
             }
-            return rolesPermissionsList;
+
+            rolePermissionList = rolesPermissionMap.Values.ToList();
+
+            return rolePermissionList;
+
         }
     }
 }

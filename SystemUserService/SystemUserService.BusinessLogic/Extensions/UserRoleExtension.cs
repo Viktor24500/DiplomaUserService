@@ -33,38 +33,48 @@ namespace SystemUserService.BusinessLogic.Extensions
         }
         public static List<UserRole> MapToUserRoleCollection(this List<UserRoleDTO> userRoleDTOList)
         {
-            // Create a new list to hold the mapped UserRole objects
             List<UserRole> userRoleList = new List<UserRole>();
+            Dictionary<int, UserRole> userRoleMap = new Dictionary<int, UserRole>();
 
-            // Iterate over each UserRoleDTO in the input list
-            foreach (var dto in userRoleDTOList)
+            foreach (UserRoleDTO dto in userRoleDTOList)
             {
-                List<Role> roles = new List<Role>
+                Role role = new Role(
+                    dto.RoleId, dto.RoleName, dto.RoleDescription
+                );
+
+                if (userRoleMap.ContainsKey(dto.UserRolesUserId))
                 {
-                   new Role(
-                        dto.RoleId, dto.RoleName, dto.RoleDescription
-                    )
-                };
-                User user = new User(
-                    dto.UserId, dto.Username, dto.UserPassword,
-                    dto.Email, dto.FirstName, dto.LastName,
-                    dto.FatherName, dto.DateRegistered, dto.LastLogin,
-                     dto.TokenExpiration, dto.IsActive, dto.LastToken
-                );
+                    userRoleMap[dto.UserRolesUserId].Roles.Add(role);
+                }
+                else
+                {
+                    User user = new User(
+                        dto.UserId, dto.Username, dto.UserPassword,
+                        dto.Email, dto.FirstName, dto.LastName,
+                        dto.FatherName, dto.DateRegistered, dto.LastLogin,
+                        dto.TokenExpiration, dto.IsActive, dto.LastToken
+                    );
 
-                // Map the DTO to a UserRole object
-                UserRole userRole = new UserRole(
-                    dto.UserRoleId,
-                    dto.UserRolesUserId,
-                    dto.UserRolesRoleId,
-                    roles,
-                    user
-                );
+                    List<Role> roles = new List<Role> { role };
 
-                // Add the mapped UserRole object to the list
-                userRoleList.Add(userRole);
+                    UserRole userRole = new UserRole(
+                        dto.UserRoleId,
+                        dto.UserRolesUserId,
+                        dto.UserRolesRoleId,
+                        roles,
+                        user
+                    );
+
+                    // Add the new UserRole to the dictionary
+                    userRoleMap[dto.UserRoleId] = userRole;
+                }
             }
+
+            // Convert the dictionary values to a list
+            userRoleList = userRoleMap.Values.ToList();
+
             return userRoleList;
+
         }
     }
 }
