@@ -20,6 +20,7 @@ namespace SystemUserService.Common.Validators
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "email not match regex";
+                _logger.LogError(result.ErrorMessage);
                 return result;
             }
             return result;
