@@ -16,12 +16,14 @@ namespace SystemUserService.BusinessLogic.Services
     {
         private IUsersRepository _usersRepository;
         private PasswordChecks _passwordChecks;
+        private EmailValidation _emailValidation;
         private ILogger<UserService> _logger;
-        public UserService(IUsersRepository usersRepository, ILogger<UserService> logger, PasswordChecks passwordChecks)
+        public UserService(IUsersRepository usersRepository, ILogger<UserService> logger, PasswordChecks passwordChecks, EmailValidation emailValidation)
         {
             _usersRepository = usersRepository;
             _logger = logger;
             _passwordChecks = passwordChecks;
+            _emailValidation = emailValidation;
         }
         public async Task<Result<User>> CreateUser(string username, string userPassword, string email, string firstName, string lastName, string? fatherName, DateTime dateRegistered, DateTime? lastLogin, bool isActive)
         {
@@ -62,6 +64,13 @@ namespace SystemUserService.BusinessLogic.Services
                 result.ErrorMessage = "firstName or lastName can't be null or empty";
                 _logger.LogError(result.ErrorMessage);
                 return result;
+            }
+
+            //check email pattern
+            if (_emailValidation.isEmailValid(email).ErrorCode == (int)ErrorCodes.BadRequest)
+            {
+                result.ErrorCode = (int)ErrorCodes.BadRequest;
+                result.ErrorMessage = "email not match with pattern";
             }
             Result<UserDTO> repResult = await _usersRepository.GetUserByName(username);
             if (repResult.ErrorCode == (int)ErrorCodes.Success)
@@ -270,6 +279,13 @@ namespace SystemUserService.BusinessLogic.Services
                 result.ErrorMessage = "firstName or lastName can't be null or empty";
                 _logger.LogError(result.ErrorMessage);
                 return result;
+            }
+
+            //check email pattern
+            if (_emailValidation.isEmailValid(email).ErrorCode == (int)ErrorCodes.BadRequest)
+            {
+                result.ErrorCode = (int)ErrorCodes.BadRequest;
+                result.ErrorMessage = "email not match with pattern";
             }
 
             Result<UserDTO> repResult = await _usersRepository.GetUserByEmail(email);
