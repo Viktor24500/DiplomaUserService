@@ -13,6 +13,7 @@
             LastName = lastName;
             FatherName = fatherName;
             DateRegistered = dateRegistered;
+            //TODO YP: ці поля не є частиною профайла юзера. Це характеристики логін сесії і повинні хендлитись окремо
             LastLogin = lastLogin;
             TokenExpiration = tokenExpiration;
             IsActive = isActive;

@@ -28,6 +28,8 @@ namespace SystemUserService.BusinessLogic.Services
         public async Task<Result<User>> CreateUser(string username, string userPassword, string email, string firstName, string lastName, string? fatherName, DateTime dateRegistered, DateTime? lastLogin, bool isActive)
         {
             Result<User> result = new Result<User>();
+            //TODO YP: всі ці перевірки треба винести в приватні методи з відповідними назвами 
+            //для того щоб це все краще читалось
             if (string.IsNullOrWhiteSpace(username))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -44,6 +46,7 @@ namespace SystemUserService.BusinessLogic.Services
             }
 
             //check password pattern
+            //TODO YP: назва методу не відповідає тому що він робить. З назви здається що він валідує пасворд а насправді він тільки валідує патерн
             if (_passwordChecks.isPasswordValid(userPassword).ErrorCode == (int)ErrorCodes.BadRequest)
             {
                 result.ErrorCode = _passwordChecks.isPasswordValid(userPassword).ErrorCode;
@@ -107,6 +110,8 @@ namespace SystemUserService.BusinessLogic.Services
                 }
                 hashedPassword = sb.ToString();
             }
+            //TODO YP: токен і його екпірейшен не являються частиною профайла юзера, вони являються частино
+            //логін сесії і оброблятися повинні окремо
             string? lastToken = repResult.Data.LastToken;
             DateTime? tokenExpiration = repResult.Data.TokenExpiration;
             Result<int> repCreateResult = await _usersRepository.CreateUser(username, hashedPassword, email, firstName, lastName, fatherName, dateRegistered,
@@ -181,6 +186,7 @@ namespace SystemUserService.BusinessLogic.Services
 
         public async Task<Result<string>> LoginUser(string name, string password)
         {
+            //TODO YP: тут краще винести все в приватні методи з навами щоб було читабельне флоу
             Result<string> result = new Result<string>();
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
             {
@@ -234,8 +240,10 @@ namespace SystemUserService.BusinessLogic.Services
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
+            //TODO YP: я вже писав що це не повинно бути частиною юзера це повинні бути сесії юзера і зберігатись в окремій таблиці
             string token = Guid.NewGuid().ToString();
             DateTime lastLogin = DateTime.Now;
+            //TODO YP: це повинно бути конфігурабельно
             DateTime tokenExpiration = lastLogin.AddMinutes(30);
 
             int userId = repResult.Data.UserId;

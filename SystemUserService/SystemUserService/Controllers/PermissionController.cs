@@ -25,6 +25,7 @@ namespace SystemUserService.Controllers
             {
                 return Ok(result.Data);
             }
+            
             throw new Exception("Could not get all permissions");
         }
 
