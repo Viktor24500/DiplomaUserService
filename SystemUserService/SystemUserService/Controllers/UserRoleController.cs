@@ -3,6 +3,7 @@ using SystemUserService.BusinessLogic.Entities.UsersRoles;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
+using SystemUserService.Utility;
 
 namespace SystemUserService.Controllers
 {
@@ -25,7 +26,8 @@ namespace SystemUserService.Controllers
             {
                 return Ok(result.Data);
             }
-            throw new Exception("Could not get all roles with permission");
+            Utilities.HandleUnexpectedErrorCode(result);
+            return StatusCode(500);
         }
 
         [Route("/userRolesByRoleId/{id}")]
@@ -33,19 +35,18 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> GetUserRolesByRoleId(int id)
         {
             Result<List<UserRole>> result = await _userRoleService.GetUserRoleByRoleId(id);
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
+            switch (result.ErrorCode)
             {
-                return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            else
-            {
-                return Ok(result.Data);
-            }
-            throw new Exception("Could not get role");
         }
 
 
@@ -54,19 +55,18 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> GetUserRolesByUserId(int id)
         {
             Result<List<UserRole>> result = await _userRoleService.GetUserRoleByUserId(id);
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
+            switch (result.ErrorCode)
             {
-                return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            else
-            {
-                return Ok(result.Data);
-            }
-            throw new Exception("Could not get role");
         }
 
         [Route("/userRoles")]
@@ -74,19 +74,18 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> CreateUserRoles(int roleId, List<int> permissionsId)
         {
             Result<List<UserRole>> result = await _userRoleService.CreateUserRoles(roleId, permissionsId);
-            if (result.ErrorCode == (int)ErrorCodes.Conflict)
+            switch (result.ErrorCode)
             {
-                return Conflict(result.ErrorMessage);
+                case (int)ErrorCodes.Conflict:
+                    return Conflict(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            if (result.ErrorCode == (int)ErrorCodes.Success)
-            {
-                return Created("/roles", result.Data);
-            }
-            throw new Exception("Could not update role permission");
         }
 
         [Route("/userRoles/{userRoleId}")]
@@ -94,23 +93,20 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> UpdateUserRoles(int userRoleId, int roleId, int permissionId)
         {
             Result<List<UserRole>> result = await _userRoleService.UpdateUserRole(userRoleId, roleId, permissionId);
-            if (result.ErrorCode == (int)ErrorCodes.Success)
+            switch (result.ErrorCode)
             {
-                return Ok(result.Data);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.Conflict:
+                    return Conflict(result.ErrorMessage);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
-            {
-                return NotFound(result.ErrorMessage);
-            }
-            if (result.ErrorCode == (int)ErrorCodes.Conflict)
-            {
-                return Conflict(result.ErrorMessage);
-            }
-            throw new Exception("Could not update role permission");
         }
     }
 }

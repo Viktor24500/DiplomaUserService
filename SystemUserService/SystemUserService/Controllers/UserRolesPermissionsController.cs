@@ -3,6 +3,7 @@ using SystemUserService.BusinessLogic.Entities.UsersRolesPermissions;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
+using SystemUserService.Utility;
 
 namespace SystemUserService.Controllers
 {
@@ -25,7 +26,8 @@ namespace SystemUserService.Controllers
             {
                 return Ok(result.Data);
             }
-            throw new Exception("Could not get all roles with permission");
+            Utilities.HandleUnexpectedErrorCode(result);
+            return StatusCode(500);
         }
 
         [Route("/userRolePermissionsByRoleId/{id}")]
@@ -33,19 +35,18 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> GetUserRolePermissionsByRoleId(int id)
         {
             Result<List<UserRolePermissions>> result = await _userRolePermissionsService.GetUserRolePermissionsByRoleId(id);
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
+            switch (result.ErrorCode)
             {
-                return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            else
-            {
-                return Ok(result.Data);
-            }
-            throw new Exception("Could not get role");
         }
 
 
@@ -54,19 +55,18 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> GetUserRolePermissionsByUserId(int id)
         {
             Result<List<UserRolePermissions>> result = await _userRolePermissionsService.GetUserRolePermissionsByUserId(id);
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
+            switch (result.ErrorCode)
             {
-                return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            else
-            {
-                return Ok(result.Data);
-            }
-            throw new Exception("Could not get role");
         }
 
         [Route("/userRolePermissionsByPermissionId/{id}")]
@@ -74,19 +74,18 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> GetUserRolePermissionsByPermissionId(int id)
         {
             Result<List<UserRolePermissions>> result = await _userRolePermissionsService.GetUserRolePermissionsByPermissionId(id);
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
+            switch (result.ErrorCode)
             {
-                return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            else
-            {
-                return Ok(result.Data);
-            }
-            throw new Exception("Could not get role");
         }
     }
 }

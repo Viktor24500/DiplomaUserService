@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 using System.Text;
 using SystemUserService.BusinessLogic.Entities.Users;
@@ -18,12 +19,15 @@ namespace SystemUserService.BusinessLogic.Services
         private PasswordChecks _passwordChecks;
         private EmailValidation _emailValidation;
         private ILogger<UserService> _logger;
-        public UserService(IUsersRepository usersRepository, ILogger<UserService> logger, PasswordChecks passwordChecks, EmailValidation emailValidation)
+        private IConfiguration _configuration;
+        public UserService(IUsersRepository usersRepository, ILogger<UserService> logger, PasswordChecks passwordChecks, EmailValidation emailValidation,
+            IConfiguration configuration)
         {
             _usersRepository = usersRepository;
             _logger = logger;
             _passwordChecks = passwordChecks;
             _emailValidation = emailValidation;
+            _configuration = configuration;
         }
         public async Task<Result<User>> CreateUser(string username, string userPassword, string email, string firstName, string lastName, string? fatherName, DateTime dateRegistered, DateTime? lastLogin, bool isActive)
         {
@@ -46,11 +50,10 @@ namespace SystemUserService.BusinessLogic.Services
             }
 
             //check password pattern
-            //TODO YP: назва методу не відповідає тому що він робить. З назви здається що він валідує пасворд а насправді він тільки валідує патерн
-            if (_passwordChecks.isPasswordValid(userPassword).ErrorCode == (int)ErrorCodes.BadRequest)
+            if (_passwordChecks.isPasswordPatternValid(userPassword).ErrorCode == (int)ErrorCodes.BadRequest)
             {
-                result.ErrorCode = _passwordChecks.isPasswordValid(userPassword).ErrorCode;
-                result.ErrorMessage = _passwordChecks.isPasswordValid(userPassword).ErrorMessage;
+                result.ErrorCode = _passwordChecks.isPasswordPatternValid(userPassword).ErrorCode;
+                result.ErrorMessage = _passwordChecks.isPasswordPatternValid(userPassword).ErrorMessage;
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
@@ -70,7 +73,7 @@ namespace SystemUserService.BusinessLogic.Services
             }
 
             //check email pattern
-            if (_emailValidation.isEmailValid(email).ErrorCode == (int)ErrorCodes.BadRequest)
+            if (_emailValidation.isEmailPatternValid(email).ErrorCode == (int)ErrorCodes.BadRequest)
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "email not match with pattern";
@@ -154,10 +157,10 @@ namespace SystemUserService.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Result<List<User>>> GetUserByIsActive(bool isActive)
+        public async Task<Result<List<User>>> GetUserByActiveStatus(bool isActive)
         {
             Result<List<User>> result = new Result<List<User>>();
-            Result<List<UserDTO>> repResult = await _usersRepository.GetUserByIsActive(isActive);
+            Result<List<UserDTO>> repResult = await _usersRepository.GetUserByActiveStatus(isActive);
             result.Data = repResult.Data.MapToUsersCollection();
             return result;
         }
@@ -206,10 +209,10 @@ namespace SystemUserService.BusinessLogic.Services
             }
 
             //check password pattern
-            if (_passwordChecks.isPasswordValid(password).ErrorCode == (int)ErrorCodes.BadRequest)
+            if (_passwordChecks.isPasswordPatternValid(password).ErrorCode == (int)ErrorCodes.BadRequest)
             {
-                result.ErrorCode = _passwordChecks.isPasswordValid(password).ErrorCode;
-                result.ErrorMessage = _passwordChecks.isPasswordValid(password).ErrorMessage;
+                result.ErrorCode = _passwordChecks.isPasswordPatternValid(password).ErrorCode;
+                result.ErrorMessage = _passwordChecks.isPasswordPatternValid(password).ErrorMessage;
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
@@ -243,8 +246,8 @@ namespace SystemUserService.BusinessLogic.Services
             //TODO YP: я вже писав що це не повинно бути частиною юзера це повинні бути сесії юзера і зберігатись в окремій таблиці
             string token = Guid.NewGuid().ToString();
             DateTime lastLogin = DateTime.Now;
-            //TODO YP: це повинно бути конфігурабельно
-            DateTime tokenExpiration = lastLogin.AddMinutes(30);
+
+            DateTime tokenExpiration = lastLogin.AddMinutes(double.Parse(_configuration["TokenExpirationTime"]));
 
             int userId = repResult.Data.UserId;
             Result repUpdateLoginResult = await _usersRepository.UpdateLoginUser(userId, lastLogin, token, tokenExpiration);
@@ -290,7 +293,7 @@ namespace SystemUserService.BusinessLogic.Services
             }
 
             //check email pattern
-            if (_emailValidation.isEmailValid(email).ErrorCode == (int)ErrorCodes.BadRequest)
+            if (_emailValidation.isEmailPatternValid(email).ErrorCode == (int)ErrorCodes.BadRequest)
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "email not match with pattern";

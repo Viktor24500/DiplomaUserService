@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using SystemUserService.BusinessLogic.Entities.Users;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
+using SystemUserService.Utility;
 
 namespace SystemUserService.Controllers
 {
@@ -26,11 +26,8 @@ namespace SystemUserService.Controllers
             {
                 return Ok(result.Data);
             }
-            //TODO YP: якщо тут очікується лише саксес а може прийти щось інше, то те що прийшло треба помістити в ексепшен
-            //щоб залогувати наприклад throw new Exception($"Could not get all users. Unexpected error code {result.ErrorCode}");
-            //а оскільки це зустрічається в багатьох місцях, то краще написати десь в утилітах
-            //метод типу HandleUnexpectedErrorCode
-            throw new Exception("Could not get all users");
+            Utilities.HandleUnexpectedErrorCode(result);
+            return StatusCode(500);
         }
 
         [Route("/users/{id}")]
@@ -38,23 +35,18 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> GetUser(int id)
         {
             Result<User> result = await _userService.GetUser(id);
-            //TODO YP: тут краще switch
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
+            switch (result.ErrorCode)
             {
-                return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            //TODO YP: тут повинен аналізуватись ерор код інакше якщо це не нотфаунд і не бедреквест і не саксесс то 
-            //повернеться саксeсс, що неправильно
-            else
-            {
-                return Ok(result.Data);
-            }
-            //TODO YP: те саме що і вище
-            throw new Exception("Could not get user");
         }
 
         //TODO YP: погана назва і не відповідає кнвенції вище
@@ -64,55 +56,47 @@ namespace SystemUserService.Controllers
         //GET /users                   # Get all users regardless of status (optional)
         [Route("/usersIsActive/{isActive}")]
         [HttpGet]
-        //TODO YP: погана назва 
-        //можна GetUserByActiveStatus
-        public async Task<IActionResult> GetUserByIsActive(bool isActive)
+        public async Task<IActionResult> GetUserByActiveStatus(bool isActive)
         {
             //TODO YP: погана назва і як я написав вище це все може робити один метод
-            Result<List<User>> result = await _userService.GetUserByIsActive(isActive);
-            //TODO YP: тут краще switch
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
+            Result<List<User>> result = await _userService.GetUserByActiveStatus(isActive);
+
+            switch (result.ErrorCode)
             {
-                return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            //TODO YP: тут повинен аналізуватись ерор код інакше якщо це не нотфаунд і не бедреквест і не саксесс то 
-            //повернеться саксасс, що неправильно
-            else
-            {
-                return Ok(result.Data);
-            }
-            //TODO YP: те саме що і вище
-            throw new Exception("Could not get user");
         }
-      
+
         [Route("/users")]
         [HttpPost]
         public async Task<IActionResult> CreateUser(string username, string userPassword, string email,
-                       string firstName, string lastName, string? fatherName,
-                       //TODO YP: DateTime dateRegistered, DateTime? lastLogin не повинны передаватись в апы, вони повинны самы фыксуватись системою
-                       DateTime dateRegistered, DateTime? lastLogin, bool isActive)
+                       string firstName, string lastName, string? fatherName, bool isActive)
         {
+            DateTime dateRegistered = DateTime.Now;
+            DateTime? lastLogin = null;
             Result<User> result = await _userService.CreateUser(username, userPassword, email, firstName, lastName, fatherName, dateRegistered,
                 lastLogin, isActive);
-            //TODO YP: тут краще switch
-            if (result.ErrorCode == (int)ErrorCodes.Conflict)
+
+            switch (result.ErrorCode)
             {
-                return Conflict(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                case (int)ErrorCodes.Conflict:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            if (result.ErrorCode == (int)ErrorCodes.Success)
-            {
-                return Created("/users", result.Data);
-            }
-            //TODO YP: те саме що і вище
-            throw new Exception("Could not create user");
         }
 
         [Route("/users/{id}")]
@@ -120,43 +104,37 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> UpdateUser(int id, string email, string firstName, string lastName, string? fatherName, bool isActive)
         {
             Result<User> result = await _userService.UpdateUser(id, email, firstName, lastName, fatherName, isActive);
-            //TODO YP: тут краще switch
-            if (result.ErrorCode == (int)ErrorCodes.Success)
+
+            switch (result.ErrorCode)
             {
-                return Ok(result.Data);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                case (int)ErrorCodes.Conflict:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
-            {
-                return NotFound(result.ErrorMessage);
-            }
-            if (result.ErrorCode == (int)ErrorCodes.Conflict)
-            {
-                return Conflict(result.ErrorMessage);
-            }
-            //TODO YP: те саме що і вище
-            throw new Exception("Could not update user");
         }
         [HttpPost]
-        //TODO YP: погана назва і не відповідає всій конвенції що вище
-        //краще "/users/login"
-        [Route("Login")]
+        [Route("/users/login")]
         public async Task<IActionResult> Login(string username, string userpassword)
         {
             Result<string> result = await _userService.LoginUser(username, userpassword);
-            if (result.ErrorCode == (int)ErrorCodes.Success)
+            switch (result.ErrorCode)
             {
-                return Ok(result.Data);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            //TODO YP: те саме що і вище
-            throw new Exception("Could not login user");
         }
     }
 }

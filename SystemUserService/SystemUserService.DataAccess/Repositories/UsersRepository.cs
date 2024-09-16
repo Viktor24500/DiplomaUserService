@@ -299,7 +299,7 @@ namespace SystemUserService.DataAccess.Repositories
             }
         }
 
-        public async Task<Result<List<UserDTO>>> GetUserByIsActive(bool isActive)
+        public async Task<Result<List<UserDTO>>> GetUserByActiveStatus(bool isActive)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {

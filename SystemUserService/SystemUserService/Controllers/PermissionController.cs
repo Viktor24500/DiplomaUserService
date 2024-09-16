@@ -3,6 +3,7 @@ using SystemUserService.BusinessLogic.Entities.Permissions;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
+using SystemUserService.Utility;
 
 namespace SystemUserService.Controllers
 {
@@ -25,8 +26,8 @@ namespace SystemUserService.Controllers
             {
                 return Ok(result.Data);
             }
-            
-            throw new Exception("Could not get all permissions");
+            Utilities.HandleUnexpectedErrorCode(result);
+            return StatusCode(500);
         }
 
         [Route("/permissions/{id}")]
@@ -34,19 +35,18 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> GetPermission(int id)
         {
             Result<Permission> result = await _permissionService.GetPermission(id);
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
+            switch (result.ErrorCode)
             {
-                return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            else
-            {
-                return Ok(result.Data);
-            }
-            throw new Exception("Could not get permission");
         }
 
         [Route("/permissions")]
@@ -54,19 +54,18 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> CreatePermission(string name, string? description)
         {
             Result<Permission> result = await _permissionService.CreatePermission(name, description);
-            if (result.ErrorCode == (int)ErrorCodes.Conflict)
+            switch (result.ErrorCode)
             {
-                return Conflict(result.ErrorMessage);
+                case (int)ErrorCodes.Conflict:
+                    return Conflict(result.ErrorMessage);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            if (result.ErrorCode == (int)ErrorCodes.Success)
-            {
-                return Created("/permissions", result.Data);
-            }
-            throw new Exception("Could not create permission");
         }
 
         [Route("/permissions/{id}")]
@@ -74,23 +73,20 @@ namespace SystemUserService.Controllers
         public async Task<IActionResult> UpdatePermission(int id, string name, string? description)
         {
             Result<Permission> result = await _permissionService.UpdatePermission(id, name, description);
-            if (result.ErrorCode == (int)ErrorCodes.Success)
+            switch (result.ErrorCode)
             {
-                return Ok(result.Data);
+                case (int)ErrorCodes.Success:
+                    return Ok(result.Data);
+                case (int)ErrorCodes.BadRequest:
+                    return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
+                case (int)ErrorCodes.Conflict:
+                    return Conflict(result.ErrorMessage);
+                default:
+                    Utilities.HandleUnexpectedErrorCode(result);
+                    return StatusCode(500);
             }
-            if (result.ErrorCode == (int)ErrorCodes.BadRequest)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            if (result.ErrorCode == (int)ErrorCodes.NotFound)
-            {
-                return NotFound(result.ErrorMessage);
-            }
-            if (result.ErrorCode == (int)ErrorCodes.Conflict)
-            {
-                return Conflict(result.ErrorMessage);
-            }
-            throw new Exception("Could not create permission");
         }
     }
 }

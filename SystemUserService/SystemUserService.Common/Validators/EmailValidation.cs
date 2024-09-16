@@ -12,7 +12,7 @@ namespace SystemUserService.Common.Validators
         {
             _logger = logger;
         }
-        public Result isEmailValid(string email)
+        public Result isEmailPatternValid(string email)
         {
             Result result = new Result();
             Regex emailPattern = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");

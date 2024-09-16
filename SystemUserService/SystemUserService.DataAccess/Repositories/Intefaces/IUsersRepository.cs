@@ -7,7 +7,7 @@ namespace SystemUserService.DataAccess.Repositories.Intefaces
     {
         Task<Result<List<UserDTO>>> GetAllUsers();
         Task<Result<UserDTO>> GetUser(int id);
-        Task<Result<List<UserDTO>>> GetUserByIsActive(bool isActive);
+        Task<Result<List<UserDTO>>> GetUserByActiveStatus(bool isActive);
         Task<Result<UserDTO>> GetUserByEmail(string email);
         Task<Result> UpdateUser(int id, string email, string firstName,
             string lastName, string? fatherName, bool isActive);

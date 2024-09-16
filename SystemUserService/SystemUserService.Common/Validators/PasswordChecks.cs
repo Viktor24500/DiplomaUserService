@@ -13,7 +13,7 @@ namespace SystemUserService.Common.Validators
         {
             _logger = logger;
         }
-        public Result isPasswordValid(string password)
+        public Result isPasswordPatternValid(string password)
         {
             //Check password pattern
             //Regex hasNumberAndLetter = new Regex(@"\w+"); //has more than 1 number and letter
