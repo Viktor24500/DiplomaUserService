@@ -203,7 +203,7 @@ namespace SystemUserService.BusinessLogic.Services
             if (repResult.ErrorCode != (int)ErrorCodes.Success)
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
-                result.ErrorMessage = "invalid username or password";
+                result.ErrorMessage = $"User with {name} not exist";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
