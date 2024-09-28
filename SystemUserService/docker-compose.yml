@@ -7,12 +7,12 @@ services:
       dockerfile: SystemUserService/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:5004
+      - ASPNETCORE_URLS=http://+:5000
       - Main=Data Source=sqlserver,1433; User ID=sa;Password=Your123Strong123Password; Initial Catalog=DiplomaUserServiceDB
 #    depends_on:
 #      - sqlserver
     ports:
-      - 5004:5004
+      - 5000:5000
 #  sqlserver:
 #    image: mcr.microsoft.com/mssql/server:2019-latest
 #    container_name: sqlserver
