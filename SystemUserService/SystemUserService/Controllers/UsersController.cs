@@ -7,7 +7,7 @@ using SystemUserService.Utility;
 
 namespace SystemUserService.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {

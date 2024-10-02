@@ -95,24 +95,9 @@ namespace SystemUserService.BusinessLogic.Services
                 return result;
             }
 
-            string hashedPassword;
             //Hash password 
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                // Convert the password to a byte array
-                byte[] bytes = Encoding.UTF8.GetBytes(userPassword);
+            string hashedPassword = HashPassword(userPassword);
 
-                // Compute the hash
-                byte[] hashBytes = sha256Hash.ComputeHash(bytes);
-
-                // Convert the byte array to a hexadecimal string
-                StringBuilder sb = new StringBuilder();
-                foreach (byte b in hashBytes)
-                {
-                    sb.Append(b.ToString("x2")); // Converts byte to hexadecimal string
-                }
-                hashedPassword = sb.ToString();
-            }
             //TODO YP: токен і його екпірейшен не являються частиною профайла юзера, вони являються частино
             //логін сесії і оброблятися повинні окремо
             string? lastToken = repResult.Data.LastToken;
@@ -217,29 +202,12 @@ namespace SystemUserService.BusinessLogic.Services
                 return result;
             }
 
-            string hashedPassword;
-            //Hash password 
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                // Convert the password to a byte array
-                byte[] bytes = Encoding.UTF8.GetBytes(password);
-
-                // Compute the hash
-                byte[] hashBytes = sha256Hash.ComputeHash(bytes);
-
-                // Convert the byte array to a hexadecimal string
-                StringBuilder sb = new StringBuilder();
-                foreach (byte b in hashBytes)
-                {
-                    sb.Append(b.ToString("x2")); // Converts byte to hexadecimal string
-                }
-                hashedPassword = sb.ToString();
-            }
+            string hashedPassword = HashPassword(password);
 
             if (repResult.Data.UserPassword != hashedPassword)
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
-                result.ErrorMessage = "invalid username or password";
+                result.ErrorMessage = "invalid password";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
@@ -327,6 +295,29 @@ namespace SystemUserService.BusinessLogic.Services
                 return result;
             }
             return result;
+        }
+
+        private string HashPassword(string password)
+        {
+            string hashedPassword;
+            //Hash password 
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // Convert the password to a byte array
+                byte[] bytes = Encoding.UTF8.GetBytes(password);
+
+                // Compute the hash
+                byte[] hashBytes = sha256Hash.ComputeHash(bytes);
+
+                // Convert the byte array to a hexadecimal string
+                StringBuilder sb = new StringBuilder();
+                foreach (byte b in hashBytes)
+                {
+                    sb.Append(b.ToString("x2")); // Converts byte to hexadecimal string
+                }
+                hashedPassword = sb.ToString();
+            }
+            return hashedPassword;
         }
     }
 }
