@@ -71,9 +71,9 @@ namespace SystemUserService.Controllers
 
         [Route("/userRoles")]
         [HttpPost]
-        public async Task<IActionResult> CreateUserRoles(int roleId, List<int> permissionsId)
+        public async Task<IActionResult> CreateUserRoles(int userId, List<int> rolesId)
         {
-            Result<List<UserRole>> result = await _userRoleService.CreateUserRoles(roleId, permissionsId);
+            Result<List<UserRole>> result = await _userRoleService.CreateUserRoles(userId, rolesId);
             switch (result.ErrorCode)
             {
                 case (int)ErrorCodes.Conflict:
@@ -90,9 +90,9 @@ namespace SystemUserService.Controllers
 
         [Route("/userRoles/{userRoleId}")]
         [HttpPut]
-        public async Task<IActionResult> UpdateUserRoles(int userRoleId, int roleId, int permissionId)
+        public async Task<IActionResult> UpdateUserRoles(int userRoleId, int userId, int roleId)
         {
-            Result<List<UserRole>> result = await _userRoleService.UpdateUserRole(userRoleId, roleId, permissionId);
+            Result<List<UserRole>> result = await _userRoleService.UpdateUserRole(userRoleId, userId, roleId);
             switch (result.ErrorCode)
             {
                 case (int)ErrorCodes.Success:

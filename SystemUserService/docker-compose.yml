@@ -13,6 +13,7 @@ services:
 #      - sqlserver
     ports:
       - 5000:5000
+#       - 8080:80
 #  sqlserver:
 #    image: mcr.microsoft.com/mssql/server:2019-latest
 #    container_name: sqlserver
