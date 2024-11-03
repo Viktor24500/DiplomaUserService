@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using SystemUserService.BusinessLogic.Entities.Users;
 using SystemUserService.BusinessLogic.Extensions;
+using SystemUserService.BusinessLogic.Parametrs.Login;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
@@ -172,11 +173,11 @@ namespace SystemUserService.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Result<string>> LoginUser(string name, string password)
+        public async Task<Result<string>> LoginUser(LoginParametrs loginParam)
         {
             //TODO YP: тут краще винести все в приватні методи з навами щоб було читабельне флоу
             Result<string> result = new Result<string>();
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(loginParam.Name) || string.IsNullOrWhiteSpace(loginParam.Password))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "username and password can't be empty";
@@ -184,25 +185,25 @@ namespace SystemUserService.BusinessLogic.Services
                 return result;
             }
 
-            Result<UserDTO> repResult = await _usersRepository.GetUserByName(name);
+            Result<UserDTO> repResult = await _usersRepository.GetUserByName(loginParam.Name);
             if (repResult.ErrorCode != (int)ErrorCodes.Success)
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
-                result.ErrorMessage = $"User with {name} not exist";
+                result.ErrorMessage = $"User with {loginParam.Name} not exist";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
 
             //check password pattern
-            if (_passwordChecks.isPasswordPatternValid(password).ErrorCode == (int)ErrorCodes.BadRequest)
+            if (_passwordChecks.isPasswordPatternValid(loginParam.Password).ErrorCode == (int)ErrorCodes.BadRequest)
             {
-                result.ErrorCode = _passwordChecks.isPasswordPatternValid(password).ErrorCode;
-                result.ErrorMessage = _passwordChecks.isPasswordPatternValid(password).ErrorMessage;
+                result.ErrorCode = _passwordChecks.isPasswordPatternValid(loginParam.Password).ErrorCode;
+                result.ErrorMessage = _passwordChecks.isPasswordPatternValid(loginParam.Password).ErrorMessage;
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
 
-            string hashedPassword = HashPassword(password);
+            string hashedPassword = HashPassword(loginParam.Password);
 
             if (repResult.Data.UserPassword != hashedPassword)
             {

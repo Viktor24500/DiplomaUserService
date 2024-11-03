@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SystemUserService.BusinessLogic.Entities.Users;
+using SystemUserService.BusinessLogic.Parametrs.Login;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
+using SystemUserService.Request.Login;
 using SystemUserService.Utility;
 
 namespace SystemUserService.Controllers
@@ -122,9 +124,10 @@ namespace SystemUserService.Controllers
         }
         [HttpPost]
         [Route("/users/login")]
-        public async Task<IActionResult> Login(string username, string userpassword)
+        public async Task<IActionResult> Login([FromBody] LoginRequest login)
         {
-            Result<string> result = await _userService.LoginUser(username, userpassword);
+            LoginParametrs loginParam = new LoginParametrs(login.Name, login.Password);
+            Result<string> result = await _userService.LoginUser(loginParam);
             switch (result.ErrorCode)
             {
                 case (int)ErrorCodes.Success:

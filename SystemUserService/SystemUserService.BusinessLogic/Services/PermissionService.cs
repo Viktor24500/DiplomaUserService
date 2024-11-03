@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SystemUserService.BusinessLogic.Entities.Permissions;
 using SystemUserService.BusinessLogic.Extensions;
+using SystemUserService.BusinessLogic.Parametrs.Permissions;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
@@ -19,25 +20,26 @@ namespace SystemUserService.BusinessLogic.Services
             _logger = logger;
         }
 
-        public async Task<Result<Permission>> CreatePermission(string name, string? description)
+        public async Task<Result<Permission>> CreatePermission(PermissionCreateParametrs createParam)
         {
             Result<Permission> result = new Result<Permission>();
-            if (IsPermissionNameValid(name))
+            if (IsPermissionNameValid(createParam.Name))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "name can't be null or empty";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            Result<PermissionDTO> repResult = await _permissionsRepository.GetPermissionByName(name);
+            Result<PermissionDTO> repResult = await _permissionsRepository.GetPermissionByName(createParam.Name);
             if (repResult.ErrorCode == (int)ErrorCodes.Success)
             {
                 result.ErrorCode = (int)ErrorCodes.Conflict;
-                result.ErrorMessage = $"Permission with name {name} exist";
+                result.ErrorMessage = $"Permission with name {createParam.Name} exist";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            Result<int> repCreateResult = await _permissionsRepository.CreatePermission(name, description);
+            Result<int> repCreateResult = await _permissionsRepository.CreatePermission(
+                createParam.Name, createParam.Description);
             if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
             {
                 repResult = await _permissionsRepository.GetPermission(repCreateResult.Data);
@@ -76,17 +78,17 @@ namespace SystemUserService.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Result<Permission>> UpdatePermission(int id, string name, string? description)
+        public async Task<Result<Permission>> UpdatePermission(PermissionUpdateParametrs updateParam)
         {
             Result<Permission> result = new Result<Permission>();
-            if (IntExtension.IsNegative(id))
+            if (IntExtension.IsNegative(updateParam.Id))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "id can't be negative";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            if (IsPermissionNameValid(name))
+            if (IsPermissionNameValid(updateParam.Name))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "name can't be null or empty";
@@ -94,26 +96,27 @@ namespace SystemUserService.BusinessLogic.Services
                 return result;
             }
 
-            Result<PermissionDTO> repResult = await _permissionsRepository.GetPermissionByName(name);
+            Result<PermissionDTO> repResult = await _permissionsRepository.GetPermissionByName(updateParam.Name);
             if (repResult.ErrorCode != (int)ErrorCodes.NotFound)
             {
-                if (repResult.Data.Id != id)
+                if (repResult.Data.Id != updateParam.Id)
                 {
                     result.ErrorCode = (int)ErrorCodes.Conflict;
-                    result.ErrorMessage = $"Permission with name {name} exist";
+                    result.ErrorMessage = $"Permission with name {updateParam.Name} exist";
                     _logger.LogError(result.ErrorMessage);
                     return result;
                 }
             }
 
-            Result repUpdateResult = await _permissionsRepository.UpdatePermission(id, name, description);
+            Result repUpdateResult = await _permissionsRepository.UpdatePermission(
+                updateParam.Id, updateParam.Name, updateParam.Description);
             if (repUpdateResult.ErrorCode == (int)ErrorCodes.Success)
             {
-                repResult = await _permissionsRepository.GetPermission(id);
+                repResult = await _permissionsRepository.GetPermission(updateParam.Id);
                 if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
                 {
                     result.ErrorCode = (int)ErrorCodes.NotFound;
-                    result.ErrorMessage = $"Permission with {id} not exist";
+                    result.ErrorMessage = $"Permission with {updateParam.Id} not exist";
                     _logger.LogError(result.ErrorMessage);
                     return result;
                 }

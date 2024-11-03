@@ -1,4 +1,5 @@
 ﻿using SystemUserService.BusinessLogic.Entities.Roles;
+using SystemUserService.BusinessLogic.Parametrs.Roles;
 using SystemUserService.Common.Results;
 
 namespace SystemUserService.BusinessLogic.Services.Interfaces
@@ -8,8 +9,8 @@ namespace SystemUserService.BusinessLogic.Services.Interfaces
         Task<Result<List<Role>>> GetAllRoles();
 
         Task<Result<Role>> GetRole(int id);
-        Task<Result<Role>> UpdateRole(int id, string name, string? description);
+        Task<Result<Role>> UpdateRole(RoleUpdateParametrs updateParam);
 
-        Task<Result<Role>> CreateRole(string name, string? description);
+        Task<Result<Role>> CreateRole(RoleCreateParametrs createParam);
     }
 }

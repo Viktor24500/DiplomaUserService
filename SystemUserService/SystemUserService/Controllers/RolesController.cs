@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SystemUserService.BusinessLogic.Entities.Roles;
+using SystemUserService.BusinessLogic.Parametrs.Roles;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
+using SystemUserService.Request.Roles;
 using SystemUserService.Utility;
 
 namespace SystemUserService.Controllers
@@ -52,9 +54,11 @@ namespace SystemUserService.Controllers
 
         [Route("/roles")]
         [HttpPost]
-        public async Task<IActionResult> CreateRole(string name, string? description)
+        public async Task<IActionResult> CreateRole(RoleCreateRequest createRequest)
         {
-            Result<Role> result = await _roleService.CreateRole(name, description);
+            RoleCreateParametrs createParam = new RoleCreateParametrs(
+                createRequest.Name, createRequest.Description);
+            Result<Role> result = await _roleService.CreateRole(createParam);
 
             switch (result.ErrorCode)
             {
@@ -72,9 +76,11 @@ namespace SystemUserService.Controllers
 
         [Route("/roles/{id}")]
         [HttpPut]
-        public async Task<IActionResult> UpdateRole(int id, string name, string? description)
+        public async Task<IActionResult> UpdateRole(RoleUpdateRequest updateRequest)
         {
-            Result<Role> result = await _roleService.UpdateRole(id, name, description);
+            RoleUpdateParametrs updateParam = new RoleUpdateParametrs(
+               updateRequest.Id, updateRequest.Name, updateRequest.Description);
+            Result<Role> result = await _roleService.UpdateRole(updateParam);
             switch (result.ErrorCode)
             {
                 case (int)ErrorCodes.Success:

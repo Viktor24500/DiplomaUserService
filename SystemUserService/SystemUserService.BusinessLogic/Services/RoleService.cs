@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SystemUserService.BusinessLogic.Entities.Roles;
 using SystemUserService.BusinessLogic.Extensions;
+using SystemUserService.BusinessLogic.Parametrs.Roles;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
@@ -19,26 +20,27 @@ namespace SystemUserService.BusinessLogic.Services
             _logger = logger;
         }
 
-        public async Task<Result<Role>> CreateRole(string name, string? description)
+        public async Task<Result<Role>> CreateRole(RoleCreateParametrs createParam)
         {
             Result<Role> result = new Result<Role>();
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(createParam.Name))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "name can't be null or empty";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            Result<RoleDTO> repResult = await _rolesRepository.GetRoleByName(name);
+            Result<RoleDTO> repResult = await _rolesRepository.GetRoleByName(createParam.Name);
             if (repResult.ErrorCode == (int)ErrorCodes.Success)
             {
                 result.ErrorCode = (int)ErrorCodes.Conflict;
-                result.ErrorMessage = $"Role with name {name} exist";
+                result.ErrorMessage = $"Role with name {createParam.Name} exist";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
 
-            Result<int> repCreateResult = await _rolesRepository.CreateRole(name, description);
+            Result<int> repCreateResult = await _rolesRepository.CreateRole(
+                createParam.Name, createParam.Description);
             if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
             {
                 repResult = await _rolesRepository.GetRole(repCreateResult.Data);
@@ -77,43 +79,44 @@ namespace SystemUserService.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Result<Role>> UpdateRole(int id, string name, string? description)
+        public async Task<Result<Role>> UpdateRole(RoleUpdateParametrs updateParam)
         {
             Result<Role> result = new Result<Role>();
-            if (IntExtension.IsNegative(id))
+            if (IntExtension.IsNegative(updateParam.Id))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "id can't be negative";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(updateParam.Name))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
                 result.ErrorMessage = "name can't be null or empty";
                 _logger.LogError(result.ErrorMessage);
                 return result;
             }
-            Result<RoleDTO> repResult = await _rolesRepository.GetRoleByName(name);
+            Result<RoleDTO> repResult = await _rolesRepository.GetRoleByName(updateParam.Name);
             if (repResult.ErrorCode != (int)ErrorCodes.NotFound)
             {
-                if (repResult.Data.Id != id)
+                if (repResult.Data.Id != updateParam.Id)
                 {
                     result.ErrorCode = (int)ErrorCodes.Conflict;
-                    result.ErrorMessage = $"Role with name {name} exist";
+                    result.ErrorMessage = $"Role with name {updateParam.Name} exist";
                     _logger.LogError(result.ErrorMessage);
                     return result;
                 }
             }
 
-            Result repUpdateResult = await _rolesRepository.UpdateRole(id, name, description);
+            Result repUpdateResult = await _rolesRepository.UpdateRole(
+                updateParam.Id, updateParam.Name, updateParam.Description);
             if (repUpdateResult.ErrorCode == (int)ErrorCodes.Success)
             {
-                repResult = await _rolesRepository.GetRole(id);
+                repResult = await _rolesRepository.GetRole(updateParam.Id);
                 if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
                 {
                     result.ErrorCode = (int)ErrorCodes.NotFound;
-                    result.ErrorMessage = $"User with item {id} not exist";
+                    result.ErrorMessage = $"User with item {updateParam.Id} not exist";
                     _logger.LogError(result.ErrorMessage);
                     return result;
                 }

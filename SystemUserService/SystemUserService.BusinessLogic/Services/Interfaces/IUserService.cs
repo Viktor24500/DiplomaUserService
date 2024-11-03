@@ -1,4 +1,5 @@
 ﻿using SystemUserService.BusinessLogic.Entities.Users;
+using SystemUserService.BusinessLogic.Parametrs.Login;
 using SystemUserService.Common.Results;
 
 namespace SystemUserService.BusinessLogic.Services.Interfaces
@@ -15,6 +16,6 @@ namespace SystemUserService.BusinessLogic.Services.Interfaces
 
         Task<Result<User>> GetUserByName(string name);
 
-        Task<Result<string>> LoginUser(string name, string password);
+        Task<Result<string>> LoginUser(LoginParametrs loginParam);
     }
 }

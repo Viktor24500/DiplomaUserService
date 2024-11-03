@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SystemUserService.BusinessLogic.Entities.Permissions;
+using SystemUserService.BusinessLogic.Parametrs.Permissions;
 using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
+using SystemUserService.Request.Permissions;
 using SystemUserService.Utility;
 
 namespace SystemUserService.Controllers
@@ -51,9 +53,11 @@ namespace SystemUserService.Controllers
 
         [Route("/permissions")]
         [HttpPost]
-        public async Task<IActionResult> CreatePermission(string name, string? description)
+        public async Task<IActionResult> CreatePermission(PermissionCreateRequest createRequest)
         {
-            Result<Permission> result = await _permissionService.CreatePermission(name, description);
+            PermissionCreateParametrs createParam = new PermissionCreateParametrs(
+                createRequest.Name, createRequest.Description);
+            Result<Permission> result = await _permissionService.CreatePermission(createParam);
             switch (result.ErrorCode)
             {
                 case (int)ErrorCodes.Conflict:
@@ -70,9 +74,11 @@ namespace SystemUserService.Controllers
 
         [Route("/permissions/{id}")]
         [HttpPut]
-        public async Task<IActionResult> UpdatePermission(int id, string name, string? description)
+        public async Task<IActionResult> UpdatePermission(PermissionUpdateRequest updateRequest)
         {
-            Result<Permission> result = await _permissionService.UpdatePermission(id, name, description);
+            PermissionUpdateParametrs updateParam = new PermissionUpdateParametrs(
+                updateRequest.Id, updateRequest.Name, updateRequest.Description);
+            Result<Permission> result = await _permissionService.UpdatePermission(updateParam);
             switch (result.ErrorCode)
             {
                 case (int)ErrorCodes.Success:
