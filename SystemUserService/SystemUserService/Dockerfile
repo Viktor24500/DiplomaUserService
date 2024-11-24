@@ -9,18 +9,18 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["SystemUserService/SystemUserService.csproj", "SystemUserService/"]
-COPY ["SystemUserService.BusinessLogic/SystemUserService.BusinessLogic.csproj", "SystemUserService.BusinessLogic/"]
-COPY ["SystemUserService.Common/SystemUserService.Common.csproj", "SystemUserService.Common/"]
-COPY ["SystemUserService.DataAccess/SystemUserService.DataAccess.csproj", "SystemUserService.DataAccess/"]
-RUN dotnet restore "./SystemUserService/./SystemUserService.csproj"
+COPY ["SystemUserService/SystemUserService/SystemUserService.csproj", "SystemUserService/"]
+COPY ["SystemUserService/SystemUserService.BusinessLogic/SystemUserService.BusinessLogic.csproj", "SystemUserService.BusinessLogic/"]
+COPY ["SystemUserService/SystemUserService.Common/SystemUserService.Common.csproj", "SystemUserService.Common/"]
+COPY ["SystemUserService/SystemUserService.DataAccess/SystemUserService.DataAccess.csproj", "SystemUserService.DataAccess/"]
+RUN dotnet restore "./SystemUserService/SystemUserService.csproj"
 COPY . .
 WORKDIR "/src/SystemUserService"
-RUN dotnet build "./SystemUserService.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./SystemUserService/SystemUserService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./SystemUserService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./SystemUserService/SystemUserService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

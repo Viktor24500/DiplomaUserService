@@ -4,24 +4,27 @@ using SystemUserService.BusinessLogic.Entities.Users;
 
 namespace SystemUserService.BusinessLogic.Entities.UsersRolesPermissions
 {
-    public class UserRolePermissions
-    {
-        public UserRolePermissions(int userRoleId, int userRolesUserId, int userRolesRoleId, List<Role> role, User user, List<Permission> permission)
-        {
-            UserRoleId = userRoleId;
-            UserRolesUserId = userRolesUserId;
-            UserRolesRoleId = userRolesRoleId;
-            User = user;
-            Role = role;
-            Permission = permission;
-        }
+	public class UserRolePermissions
+	{
+		public UserRolePermissions(int userRoleId, int userRolesUserId, int userRolesRoleId, /*List<Role> role*/ Role role,
+			User user, List<Permission> permission)
+		{
+			UserRoleId = userRoleId;
+			UserRolesUserId = userRolesUserId;
+			UserRolesRoleId = userRolesRoleId;
+			User = user;
+			Role = role;
+			Permission = permission;
+		}
 
-        public int UserRoleId { get; set; }
-        public int UserRolesUserId { get; set; }
-        public int UserRolesRoleId { get; set; }
-        public User User { get; set; }
+		public int UserRoleId { get; set; }
+		public int UserRolesUserId { get; set; }
+		public int UserRolesRoleId { get; set; }
+		public User User { get; set; }
 
-        public List<Role> Role { get; set; }
-        public List<Permission> Permission { get; set; }
-    }
+		//public List<Role> Role { get; set; }
+
+		public Role Role { get; set; }
+		public List<Permission> Permission { get; set; }
+	}
 }

@@ -6,105 +6,171 @@ using SystemUserService.DataAccess.DTO.UsersRolesPermissions;
 
 namespace SystemUserService.BusinessLogic.Extensions
 {
-    public static class UserRolePermissionsExtension
-    {
-        public static UserRolePermissions MapToUserRolePermissions(this UserRolePermissionDTO dto)
-        {
-            List<Role> roles = new List<Role>
-            {
-                new Role(
-                dto.RoleId, dto.RoleName, dto.RoleDescription
-                )
-            };
-            User user = new User(dto.UserId, dto.Username, dto.UserPassword, dto.Email,
-                dto.FirstName, dto.LastName, dto.FatherName, dto.DateRegistered,
-                dto.LastLogin, dto.TokenExpiration, dto.IsActive, dto.LastToken);
+	public static class UserRolePermissionsExtension
+	{
+		public static UserRolePermissions MapToUserRolePermissions(this UserRolePermissionDTO dto)
+		{
+			//List<Role> roles = new List<Role>
+			//{
+			//    new Role(
+			//    dto.RoleId, dto.RoleName, dto.RoleDescription
+			//    )
+			//};
 
-            List<Permission> permissions = new List<Permission>
-            {
-                new Permission(
-                    dto.PermissionId, dto.PermissionName, dto.PermissionDescription
-                )
-            };
+			Role role = new Role(
+				dto.RoleId, dto.RoleName, dto.RoleDescription
+			);
 
-            return new UserRolePermissions(
-                dto.UserRoleId,
-                dto.UserRolesUserId,
-                dto.UserRolesRoleId,
-                roles,
-                user,
-                permissions
-            );
-        }
-        public static List<UserRolePermissions> MapToUserRolePermissionsCollection(this List<UserRolePermissionDTO> userRolePermissionDTOList)
-        {
-            List<UserRolePermissions> userRolePermissionsList = new List<UserRolePermissions>();
-            Dictionary<int, UserRolePermissions> userRolePermissionsMap = new Dictionary<int, UserRolePermissions>();
+			User user = new User(dto.UserId, dto.Username, dto.UserPassword, dto.Email,
+				dto.FirstName, dto.LastName, dto.FatherName, dto.DateRegistered,
+				dto.LastLogin, dto.TokenExpiration, dto.IsActive, dto.LastToken);
 
-            foreach (UserRolePermissionDTO dto in userRolePermissionDTOList)
-            {
-                User user = new User(
-                    dto.UserId, dto.Username, dto.UserPassword, dto.Email, dto.FirstName, dto.LastName,
-                    dto.FatherName, dto.DateRegistered, dto.LastLogin, dto.TokenExpiration, dto.IsActive, dto.LastToken
-                );
+			List<Permission> permissions = new List<Permission>
+			{
+				new Permission(
+					dto.PermissionId, dto.PermissionName, dto.PermissionDescription
+				)
+			};
 
-                Role role = new Role(
-                    dto.RoleId, dto.RoleName, dto.RoleDescription
-                );
+			return new UserRolePermissions(
+				dto.UserRoleId,
+				dto.UserRolesUserId,
+				dto.UserRolesRoleId,
+				//roles,
+				role,
+				user,
+				permissions
+			);
+		}
+		public static List<UserRolePermissions> MapToUserRolePermissionsCollection(this List<UserRolePermissionDTO> userRolePermissionDTOList)
+		{
+			//List<UserRolePermissions> userRolePermissionsList = new List<UserRolePermissions>();
+			//Dictionary<int, UserRolePermissions> userRolePermissionsMap = new Dictionary<int, UserRolePermissions>();
 
-                Permission permission = new Permission(
-                    dto.PermissionId, dto.PermissionName, dto.PermissionDescription
-                );
+			//foreach (UserRolePermissionDTO dto in userRolePermissionDTOList)
+			//{
+			//	User user = new User(
+			//		dto.UserId, dto.Username, dto.UserPassword, dto.Email, dto.FirstName, dto.LastName,
+			//		dto.FatherName, dto.DateRegistered, dto.LastLogin, dto.TokenExpiration, dto.IsActive, dto.LastToken
+			//	);
 
-                if (userRolePermissionsMap.ContainsKey(dto.UserRoleId))
-                {
-                    var userRolePermissions = userRolePermissionsMap[dto.UserRoleId];
-                    if (!userRolePermissions.Role.Contains(role))
-                    {
-                        userRolePermissions.Role.Add(role);
-                    }
-                    if (!userRolePermissions.Permission.Contains(permission))
-                    {
-                        userRolePermissions.Permission.Add(permission);
-                    }
-                }
-                else
-                {
-                    //if (roles == null)
-                    //{
-                    //    roles = new List<Role>();
-                    //}
-                    //if (permissions == null)
-                    //{
-                    //    permissions = new List<Permission>();
-                    //}
-                    //if (!roles.Contains(role))
-                    //{
-                    //    roles = new List<Role> { role };
-                    //}
-                    //if (!permissions.Contains(permission))
-                    //{
-                    //    permissions = new List<Permission> { permission };
-                    //}
-                    List<Role> roles = new List<Role> { role };
-                    List<Permission> permissions = new List<Permission> { permission };
-                    UserRolePermissions userRolePermissions = new UserRolePermissions(
-                        dto.UserRoleId,
-                        dto.UserRolesUserId,
-                        dto.UserRolesRoleId,
-                        roles,
-                        user,
-                        permissions
-                    );
+			//	Role role = new Role(
+			//		dto.RoleId, dto.RoleName, dto.RoleDescription
+			//	);
 
-                    userRolePermissionsMap[dto.UserRoleId] = userRolePermissions;
-                }
-            }
+			//	Permission permission = new Permission(
+			//		dto.PermissionId, dto.PermissionName, dto.PermissionDescription
+			//	);
 
-            userRolePermissionsList = userRolePermissionsMap.Values.ToList();
+			//	if (userRolePermissionsMap.ContainsKey(dto.UserRoleId))
+			//	{
+			//		var userRolePermissions = userRolePermissionsMap[dto.UserRoleId];
+			//		if (!userRolePermissions.Role.Contains(role))
+			//		{
+			//			userRolePermissions.Role.Add(role);
+			//		}
+			//		if (!userRolePermissions.Permission.Contains(permission))
+			//		{
+			//			userRolePermissions.Permission.Add(permission);
+			//		}
+			//	}
+			//	else
+			//	{
+			//		//if (roles == null)
+			//		//{
+			//		//    roles = new List<Role>();
+			//		//}
+			//		//if (permissions == null)
+			//		//{
+			//		//    permissions = new List<Permission>();
+			//		//}
+			//		//if (!roles.Contains(role))
+			//		//{
+			//		//    roles = new List<Role> { role };
+			//		//}
+			//		//if (!permissions.Contains(permission))
+			//		//{
+			//		//    permissions = new List<Permission> { permission };
+			//		//}
+			//		List<Role> roles = new List<Role> { role };
+			//		List<Permission> permissions = new List<Permission> { permission };
+			//		UserRolePermissions userRolePermissions = new UserRolePermissions(
+			//			dto.UserRoleId,
+			//			dto.UserRolesUserId,
+			//			dto.UserRolesRoleId,
+			//			roles,
+			//			user,
+			//			permissions
+			//		);
 
-            return userRolePermissionsList;
+			//		userRolePermissionsMap[dto.UserRoleId] = userRolePermissions;
+			//	}
+			//}
 
-        }
-    }
+			//userRolePermissionsList = userRolePermissionsMap.Values.ToList();
+
+			//return userRolePermissionsList;
+
+			List<UserRolePermissions> userRolePermissionsList = new List<UserRolePermissions>();
+			Dictionary<int, UserRolePermissions> userRolePermissionsMap = new Dictionary<int, UserRolePermissions>();
+
+			foreach (UserRolePermissionDTO dto in userRolePermissionDTOList)
+			{
+				// Create the User object
+				User user = new User(
+					dto.UserId, dto.Username, dto.UserPassword,
+					dto.Email, dto.FirstName,
+					dto.LastName, dto.FatherName,
+					dto.DateRegistered, dto.LastLogin,
+					dto.TokenExpiration, dto.IsActive,
+					dto.LastToken
+				);
+
+				// Create the Role object
+				Role role = new Role(
+					dto.RoleId,
+					dto.RoleName,
+					dto.RoleDescription
+				);
+
+				// Create the Permission object
+				Permission permission = new Permission(
+					dto.PermissionId,
+					dto.PermissionName,
+					dto.PermissionDescription
+				);
+
+				if (userRolePermissionsMap.ContainsKey(dto.UserRoleId))
+				{
+					var userRolePermissions = userRolePermissionsMap[dto.UserRoleId];
+					if (!userRolePermissions.Permission.Contains(permission))
+					{
+						userRolePermissions.Permission.Add(permission);
+					}
+				}
+				else
+				{
+					// Create a new UserRolePermissions object with a single role and permissions
+					List<Permission> permissions = new List<Permission> { permission };
+
+					UserRolePermissions userRolePermissions = new UserRolePermissions(
+						dto.UserRoleId,
+						dto.UserRolesUserId,
+						dto.UserRolesRoleId,
+						role,
+						user,
+						permissions
+					);
+
+					userRolePermissionsMap[dto.UserRoleId] = userRolePermissions;
+				}
+			}
+
+			// Convert the dictionary values to a list
+			userRolePermissionsList = userRolePermissionsMap.Values.ToList();
+
+			return userRolePermissionsList;
+
+		}
+	}
 }
