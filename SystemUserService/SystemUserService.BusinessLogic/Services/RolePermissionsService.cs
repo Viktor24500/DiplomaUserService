@@ -26,10 +26,10 @@ namespace SystemUserService.BusinessLogic.Services
 			_rolesRepository = rolesRepository;
 			_permissionsRepository = permissionsRepository;
 		}
-		public async Task<Result<List<RolesPermission>>> CreateRolePermissions(RolePermissionCreateParameters rolePermissionCreateParameters)
+		public async Task<Result<RolesPermission>> CreateRolePermissions(RolePermissionCreateParameters rolePermissionCreateParameters)
 		{
 			//Validate role id
-			Result<List<RolesPermission>> result = new Result<List<RolesPermission>>();
+			Result<RolesPermission> result = new Result<RolesPermission>();
 			if (IntExtension.IsNegative(rolePermissionCreateParameters.RoleId))
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -73,8 +73,8 @@ namespace SystemUserService.BusinessLogic.Services
 				rolePermissionCreateParameters.PermissionsId);
 			if (repRolePermissionCreateResult.ErrorCode == (int)ErrorCodes.Success)
 			{
-				Result<List<RolePermissionsDTO>> repReult = await _rolesPermissionsRepository.GetRolePermissionsByRoleId(rolePermissionCreateParameters.RoleId);
-				result.Data = repReult.Data.MapToRolesPermissionsCollection();
+				Result<RolePermissionsDTO> repReult = await _rolesPermissionsRepository.GetRolePermissionsByRoleId(rolePermissionCreateParameters.RoleId);
+				result.Data = repReult.Data.MapToRolesPermissions();
 				return result;
 			}
 			return result;
@@ -88,9 +88,9 @@ namespace SystemUserService.BusinessLogic.Services
 			return result;
 		}
 
-		public async Task<Result<List<RolesPermission>>> GetRolePermissionsByRoleId(int id)
+		public async Task<Result<RolesPermission>> GetRolePermissionsByRoleId(int id)
 		{
-			Result<List<RolesPermission>> result = new Result<List<RolesPermission>>();
+			Result<RolesPermission> result = new Result<RolesPermission>();
 			if (IntExtension.IsNegative(id))
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -107,7 +107,7 @@ namespace SystemUserService.BusinessLogic.Services
 				return result;
 			}
 
-			Result<List<RolePermissionsDTO>> repResult = await _rolesPermissionsRepository.GetRolePermissionsByRoleId(id);
+			Result<RolePermissionsDTO> repResult = await _rolesPermissionsRepository.GetRolePermissionsByRoleId(id);
 			if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
 			{
 				result.ErrorCode = (int)ErrorCodes.NotFound;
@@ -115,13 +115,13 @@ namespace SystemUserService.BusinessLogic.Services
 				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
-			result.Data = repResult.Data.MapToRolesPermissionsCollection();
+			result.Data = repResult.Data.MapToRolesPermissions();
 			return result;
 		}
 
-		public async Task<Result<List<RolesPermission>>> UpdateRolePermissions(RolePermissionUpdateParameters rolePermissionUpdateParameters)
+		public async Task<Result<RolesPermission>> UpdateRolePermissions(RolePermissionUpdateParameters rolePermissionUpdateParameters)
 		{
-			Result<List<RolesPermission>> result = new Result<List<RolesPermission>>();
+			Result<RolesPermission> result = new Result<RolesPermission>();
 			if (IntExtension.IsNegative(rolePermissionUpdateParameters.RolePermissionId))
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -168,8 +168,8 @@ namespace SystemUserService.BusinessLogic.Services
 				rolePermissionUpdateParameters.RoleId, rolePermissionUpdateParameters.PermissionId);
 			if (repRolePermissionCreateResult.ErrorCode == (int)ErrorCodes.Success)
 			{
-				Result<List<RolePermissionsDTO>> repReult = await _rolesPermissionsRepository.GetRolePermissionsByRoleId(rolePermissionUpdateParameters.RoleId);
-				result.Data = repReult.Data.MapToRolesPermissionsCollection();
+				Result<RolePermissionsDTO> repReult = await _rolesPermissionsRepository.GetRolePermissionsByRoleId(rolePermissionUpdateParameters.RoleId);
+				result.Data = repReult.Data.MapToRolesPermissions();
 				return result;
 			}
 			return result;
