@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemUserService.Common", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemUserService.DataAccess", "SystemUserService.DataAccess\SystemUserService.DataAccess.csproj", "{5AB177AB-F7CC-4C72-A1FE-ECA00B188F88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SystemUserServiceUnitTests", "SystemUserServiceUnitTests\SystemUserServiceUnitTests.csproj", "{CECEB507-4C18-4869-9B2F-D8779BE708A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserServiceTest", "UserServiceTest\UserServiceTest.csproj", "{A4721193-2E4F-4928-8663-B855D2EBBED8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{5AB177AB-F7CC-4C72-A1FE-ECA00B188F88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AB177AB-F7CC-4C72-A1FE-ECA00B188F88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AB177AB-F7CC-4C72-A1FE-ECA00B188F88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CECEB507-4C18-4869-9B2F-D8779BE708A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CECEB507-4C18-4869-9B2F-D8779BE708A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CECEB507-4C18-4869-9B2F-D8779BE708A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CECEB507-4C18-4869-9B2F-D8779BE708A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4721193-2E4F-4928-8663-B855D2EBBED8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4721193-2E4F-4928-8663-B855D2EBBED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4721193-2E4F-4928-8663-B855D2EBBED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4721193-2E4F-4928-8663-B855D2EBBED8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
