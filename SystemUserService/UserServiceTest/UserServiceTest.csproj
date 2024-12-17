@@ -20,7 +20,6 @@
   <ItemGroup>
     <Folder Include="RolePermissions\" />
     <Folder Include="Permissions\" />
-    <Folder Include="Roles\" />
   </ItemGroup>
 
   <ItemGroup>
