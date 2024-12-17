@@ -100,7 +100,7 @@ namespace UserServiceTest.UserRoles
 			// Assert
 			Assert.IsNotNull(result);
 			Assert.AreEqual((int)ErrorCodes.NotFound, result.ErrorCode);
-			Assert.AreEqual("Role with id 10 not exist", result.ErrorMessage);
+			Assert.AreEqual($"role with id {createParam.RoleId} not exist", result.ErrorMessage);
 		}
 
 		[TestMethod]
@@ -124,7 +124,7 @@ namespace UserServiceTest.UserRoles
 			// Assert
 			Assert.IsNotNull(result);
 			Assert.AreEqual((int)ErrorCodes.NotFound, result.ErrorCode);
-			Assert.AreEqual("user with id 10 not exist", result.ErrorMessage);
+			Assert.AreEqual($"user with id {createParam.UserId} not exist", result.ErrorMessage);
 		}
 
 		[TestMethod]

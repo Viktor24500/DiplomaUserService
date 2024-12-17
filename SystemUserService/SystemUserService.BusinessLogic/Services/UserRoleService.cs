@@ -62,7 +62,7 @@ namespace SystemUserService.BusinessLogic.Services
 			{
 				_logger.LogError(repRoleResult.ErrorMessage);
 				result.ErrorCode = (int)ErrorCodes.NotFound;
-				result.ErrorMessage = $"Role with id {userRoleCreateParam.RoleId} not exist";
+				result.ErrorMessage = $"role with id {userRoleCreateParam.RoleId} not exist";
 				return result;
 			}
 			Result repUserRoleResult = await _userRolesRepository.CreateUserRole(userRoleCreateParam.UserId,
@@ -123,7 +123,7 @@ namespace SystemUserService.BusinessLogic.Services
 			if (repResult.ErrorCode == (int)ErrorCodes.NotFound)
 			{
 				result.ErrorCode = (int)ErrorCodes.NotFound;
-				result.ErrorMessage = $"User role with user id {id} not exist";
+				result.ErrorMessage = $"userRole with user id {id} not exist";
 				_logger.LogError(result.ErrorMessage);
 				return result;
 			}

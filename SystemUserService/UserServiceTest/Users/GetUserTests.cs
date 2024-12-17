@@ -184,5 +184,74 @@ namespace SystemUserServiceUnitTests.Users
 
 			//Assert.IsFalse(result.Data.Contains(user3));
 		}
+
+		[TestMethod]
+		public async Task GetUserByName_Success()
+		{
+			// Arrange
+			string userName = "john.doe";
+			UserDTO userDTO = new UserDTO(
+				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
+				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+
+			Result<UserDTO> repoResult = new Result<UserDTO>
+			{
+				Data = userDTO,
+				ErrorCode = 0
+			};
+
+			_mockUsersRepository
+				.Setup(repo => repo.GetUserByName(userName))
+				.ReturnsAsync(repoResult);
+
+			// Act
+			Result<User> result = await _userService.GetUserByName(userName);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.AreEqual((int)ErrorCodes.Success, result.ErrorCode);
+			Assert.AreEqual(userDTO.UserId, result.Data.UserId);
+			Assert.AreEqual(userName, result.Data.Username);
+		}
+
+		[TestMethod]
+		public async Task GetUserByName_UserNotFound()
+		{
+			// Arrange
+			string userName = "unknown.user";
+			Result<UserDTO> repoResult = new Result<UserDTO>
+			{
+				ErrorCode = (int)ErrorCodes.NotFound,
+				ErrorMessage = "User not found"
+			};
+
+			_mockUsersRepository
+				.Setup(repo => repo.GetUserByName(userName))
+				.ReturnsAsync(repoResult);
+
+			// Act
+			Result<User> result = await _userService.GetUserByName(userName);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.AreEqual((int)ErrorCodes.NotFound, result.ErrorCode);
+			Assert.AreEqual($"User with {userName} not exist", result.ErrorMessage);
+		}
+
+		[TestMethod]
+		public async Task GetUserByName_NameIsNullOrEmpty()
+		{
+			// Arrange
+			string userName = null;
+
+			// Act
+			Result<User> result = await _userService.GetUserByName(userName);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.AreEqual((int)ErrorCodes.BadRequest, result.ErrorCode);
+			Assert.AreEqual("name can't be null or empty", result.ErrorMessage);
+		}
 	}
 }

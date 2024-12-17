@@ -199,7 +199,7 @@ namespace UserServiceTest.UserRoles
 			// Assert
 			Assert.IsNotNull(result);
 			Assert.AreEqual((int)ErrorCodes.NotFound, result.ErrorCode);
-			Assert.AreEqual("user with id 10 not exist", result.ErrorMessage);
+			Assert.AreEqual($"user with id {updateParam.UserId} not exist", result.ErrorMessage);
 		}
 
 		[TestMethod]
@@ -240,7 +240,7 @@ namespace UserServiceTest.UserRoles
 			// Assert
 			Assert.IsNotNull(result);
 			Assert.AreEqual((int)ErrorCodes.NotFound, result.ErrorCode);
-			Assert.AreEqual("role with id 10 not exist", result.ErrorMessage);
+			Assert.AreEqual($"role with id {updateParam.RoleId} not exist", result.ErrorMessage);
 		}
 
 		[TestMethod]
@@ -273,7 +273,7 @@ namespace UserServiceTest.UserRoles
 			// Assert
 			Assert.IsNotNull(result);
 			Assert.AreEqual((int)ErrorCodes.NotFound, result.ErrorCode);
-			Assert.AreEqual("userRole with id 10 not exist", result.ErrorMessage);
+			Assert.AreEqual($"userRole with id {updateParam.UserRoleId} not exist", result.ErrorMessage);
 		}
 
 		[TestMethod]
