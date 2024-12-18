@@ -38,7 +38,7 @@ namespace UserServiceTest.UserRoles
 		}
 
 		[TestMethod]
-		public async void UpdateUserRolesAsync_Fail_UserNegativeId()
+		public async Task UpdateUserRolesAsync_Fail_UserNegativeId()
 		{
 			//Arrange
 			UserRoleUpdateParameters updateParam = new UserRoleUpdateParameters(1, -1, 1);
@@ -81,7 +81,7 @@ namespace UserServiceTest.UserRoles
 
 
 		[TestMethod]
-		public async void UpdateUserRolesAsync_Fail_UserRoleNegativeId()
+		public async Task UpdateUserRolesAsync_Fail_UserRoleNegativeId()
 		{
 			//Arrange
 			UserRoleUpdateParameters updateParam = new UserRoleUpdateParameters(-1, 1, 1);
@@ -123,7 +123,7 @@ namespace UserServiceTest.UserRoles
 		}
 
 		[TestMethod]
-		public async void UpdateUserRolesAsync_Fail_RoleNegativeId()
+		public async Task UpdateUserRolesAsync_Fail_RoleNegativeId()
 		{
 			//Arrange
 			UserRoleUpdateParameters updateParam = new UserRoleUpdateParameters(1, 1, -1);
@@ -165,7 +165,7 @@ namespace UserServiceTest.UserRoles
 		}
 
 		[TestMethod]
-		public async void UpdateUserRolesAsync_Fail_UserNotFound()
+		public async Task UpdateUserRolesAsync_Fail_UserNotFound()
 		{
 			//Arrange
 			UserRoleUpdateParameters updateParam = new UserRoleUpdateParameters(1, 10, 1);
@@ -203,7 +203,7 @@ namespace UserServiceTest.UserRoles
 		}
 
 		[TestMethod]
-		public async void UpdateUserRolesAsync_Fail_RoleNotFound()
+		public async Task UpdateUserRolesAsync_Fail_RoleNotFound()
 		{
 			//Arrange
 			UserRoleUpdateParameters updateParam = new UserRoleUpdateParameters(1, 1, 10);
@@ -244,7 +244,7 @@ namespace UserServiceTest.UserRoles
 		}
 
 		[TestMethod]
-		public async void UpdateUserRolesAsync_Fail_UserRoleNotFound()
+		public async Task UpdateUserRolesAsync_Fail_UserRoleNotFound()
 		{
 			//Arrange
 			UserRoleUpdateParameters updateParam = new UserRoleUpdateParameters(10, 1, 1);
@@ -277,7 +277,7 @@ namespace UserServiceTest.UserRoles
 		}
 
 		[TestMethod]
-		public async void UpdateUserRolesAsync_Success()
+		public async Task UpdateUserRolesAsync_Success()
 		{
 			//Arrange
 			UserRoleUpdateParameters updateParam = new UserRoleUpdateParameters(1, 1, 1);

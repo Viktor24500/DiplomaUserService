@@ -77,15 +77,18 @@ namespace SystemUserService.BusinessLogic.Services
 			//check email pattern
 			if (_emailValidation.isEmailPatternValid(userCreateParam.Email).ErrorCode == (int)ErrorCodes.BadRequest)
 			{
+
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
 				result.ErrorMessage = "email not match with pattern";
+				_logger.LogError(result.ErrorMessage);
+				return result;
 			}
 			Result<UserDTO> repResult = await _usersRepository.GetUserByName(userCreateParam.Username);
 			if (repResult.ErrorCode == (int)ErrorCodes.Success)
 			{
+				_logger.LogError(repResult.ErrorMessage);
 				result.ErrorCode = (int)ErrorCodes.Conflict;
 				result.ErrorMessage = $"User with name {userCreateParam.Username} exist";
-				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
 			repResult = await _usersRepository.GetUserByEmail(userCreateParam.Email);
@@ -102,14 +105,31 @@ namespace SystemUserService.BusinessLogic.Services
 
 			//TODO YP: токен і його екпірейшен не являються частиною профайла юзера, вони являються частино
 			//логін сесії і оброблятися повинні окремо
-			string? lastToken = repResult.Data.LastToken;
-			DateTime? tokenExpiration = repResult.Data.TokenExpiration;
+			string? lastToken;
+			DateTime? tokenExpiration;
+			if (repResult.Data != null)
+			{
+				lastToken = repResult.Data.LastToken;
+				tokenExpiration = repResult.Data.TokenExpiration;
+			}
+			else
+			{
+				lastToken = null;
+				tokenExpiration = null;
+			}
 			Result<int> repCreateResult = await _usersRepository.CreateUser(userCreateParam.Username, hashedPassword,
 				userCreateParam.Email, userCreateParam.FirstName, userCreateParam.LastName, userCreateParam.FatherName, userCreateParam.DateRegistered,
 			userCreateParam.LastLogin, lastToken, tokenExpiration, userCreateParam.IsActive);
 			if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
 			{
 				repResult = await _usersRepository.GetUser(repCreateResult.Data);
+				if (repCreateResult.ErrorCode == (int)ErrorCodes.NotFound)
+				{
+					result.ErrorCode = (int)ErrorCodes.NotFound;
+					result.ErrorMessage = $"User with item {repCreateResult.Data} not exist";
+					_logger.LogError(result.ErrorMessage);
+					return result;
+				}
 				result.Data = repResult.Data.MapToUser();
 			}
 			return result;
@@ -268,6 +288,8 @@ namespace SystemUserService.BusinessLogic.Services
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
 				result.ErrorMessage = "email not match with pattern";
+				_logger.LogError(result.ErrorMessage);
+				return result;
 			}
 
 			Result<UserDTO> repResult = await _usersRepository.GetUserByEmail(userUpdateParam.Email);
@@ -296,7 +318,6 @@ namespace SystemUserService.BusinessLogic.Services
 					return result;
 				}
 				result.Data = repResult.Data.MapToUser();
-				return result;
 			}
 			return result;
 		}

@@ -225,7 +225,7 @@ namespace UserServiceTest.UserRoles
 		}
 
 		[TestMethod]
-		public async void GetAllUserRolesByRoleIdAsync_Fail_NotFound()
+		public async Task GetAllUserRolesByRoleIdAsync_Fail_NotFound()
 		{
 			//Arrange
 			int id = 10;

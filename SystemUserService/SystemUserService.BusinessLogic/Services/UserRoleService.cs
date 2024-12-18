@@ -41,9 +41,9 @@ namespace SystemUserService.BusinessLogic.Services
 			Result<UserDTO> repUserResult = await _usersRepository.GetUser(userRoleCreateParam.UserId);
 			if (repUserResult.ErrorCode == (int)ErrorCodes.NotFound)
 			{
-				_logger.LogError(repUserResult.ErrorMessage);
 				result.ErrorCode = (int)ErrorCodes.NotFound;
 				result.ErrorMessage = $"user with id {userRoleCreateParam.UserId} not exist";
+				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
 
@@ -60,9 +60,10 @@ namespace SystemUserService.BusinessLogic.Services
 			repRoleResult = await _rolesRepository.GetRole(userRoleCreateParam.RoleId);
 			if (repRoleResult.ErrorCode == (int)ErrorCodes.NotFound)
 			{
-				_logger.LogError(repRoleResult.ErrorMessage);
 				result.ErrorCode = (int)ErrorCodes.NotFound;
 				result.ErrorMessage = $"role with id {userRoleCreateParam.RoleId} not exist";
+				_logger.LogError(repUserResult.ErrorMessage);
+
 				return result;
 			}
 			Result repUserRoleResult = await _userRolesRepository.CreateUserRole(userRoleCreateParam.UserId,
@@ -70,12 +71,15 @@ namespace SystemUserService.BusinessLogic.Services
 			if (repUserRoleResult.ErrorCode == (int)ErrorCodes.Success)
 			{
 				Result<UserRoleDTO> repReult = await _userRolesRepository.GetUserRoleByUserId(userRoleCreateParam.UserId);
+				if (repReult.ErrorCode == (int)ErrorCodes.NotFound)
+				{
+					result.ErrorCode = (int)ErrorCodes.NotFound;
+					result.ErrorMessage = $"UserRole with id {userRoleCreateParam.UserId} not exist";
+					_logger.LogError(result.ErrorMessage);
+					return result;
+				}
 				result.Data = repReult.Data.MapToUserRole();
-				return result;
 			}
-			result.ErrorCode = repUserRoleResult.ErrorCode;
-			result.ErrorMessage = repUserRoleResult.ErrorMessage;
-			_logger.LogError(result.ErrorMessage);
 			return result;
 		}
 
@@ -145,9 +149,9 @@ namespace SystemUserService.BusinessLogic.Services
 			Result<UserRoleDTO> checkUserRoleResult = await _userRolesRepository.GetUserRoleByUserRoleId(userRoleUpdateParam.UserRoleId);
 			if (checkUserRoleResult.ErrorCode == (int)ErrorCodes.NotFound)
 			{
-				_logger.LogError(checkUserRoleResult.ErrorMessage);
 				result.ErrorCode = (int)ErrorCodes.NotFound;
 				result.ErrorMessage = $"userRole with id {userRoleUpdateParam.UserRoleId} not exist";
+				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
 
@@ -162,9 +166,10 @@ namespace SystemUserService.BusinessLogic.Services
 			Result<UserDTO> repUserResult = await _usersRepository.GetUser(userRoleUpdateParam.UserId);
 			if (repUserResult.ErrorCode == (int)ErrorCodes.NotFound)
 			{
-				_logger.LogError(repUserResult.ErrorMessage);
 				result.ErrorCode = (int)ErrorCodes.NotFound;
 				result.ErrorMessage = $"user with id {userRoleUpdateParam.UserId} not exist";
+				_logger.LogError(checkUserRoleResult.ErrorMessage);
+
 				return result;
 			}
 
@@ -181,9 +186,9 @@ namespace SystemUserService.BusinessLogic.Services
 			repRoleResult = await _rolesRepository.GetRole(userRoleUpdateParam.RoleId);
 			if (repRoleResult.ErrorCode == (int)ErrorCodes.NotFound)
 			{
-				_logger.LogError(repRoleResult.ErrorMessage);
 				result.ErrorCode = (int)ErrorCodes.NotFound;
 				result.ErrorMessage = $"role with id {userRoleUpdateParam.RoleId} not exist";
+				_logger.LogError(repUserResult.ErrorMessage);
 				return result;
 			}
 			Result repUserRoleResult = await _userRolesRepository.UpdateUserRole(userRoleUpdateParam.UserRoleId,
@@ -191,12 +196,15 @@ namespace SystemUserService.BusinessLogic.Services
 			if (repUserRoleResult.ErrorCode == (int)ErrorCodes.Success)
 			{
 				Result<UserRoleDTO> repReult = await _userRolesRepository.GetUserRoleByUserId(userRoleUpdateParam.UserId);
+				if (repReult.ErrorCode == (int)ErrorCodes.NotFound)
+				{
+					result.ErrorCode = (int)ErrorCodes.NotFound;
+					result.ErrorMessage = $"User with item {userRoleUpdateParam.UserId} not exist";
+					_logger.LogError(result.ErrorMessage);
+					return result;
+				}
 				result.Data = repReult.Data.MapToUserRole();
-				return result;
 			}
-			result.ErrorCode = repUserRoleResult.ErrorCode;
-			result.ErrorMessage = repUserRoleResult.ErrorMessage;
-			_logger.LogError(result.ErrorMessage);
 			return result;
 		}
 	}

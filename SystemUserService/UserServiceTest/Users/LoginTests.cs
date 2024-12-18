@@ -53,7 +53,7 @@ namespace UserServiceTest.Users
 		public async Task LoginUser_Fail_EmptyUsernameOrPassword()
 		{
 			// Arrange
-			var loginParam = new LoginParametrs("", "");
+			LoginParametrs loginParam = new LoginParametrs("", "");
 
 			// Act
 			Result<string> result = await _userService.LoginUser(loginParam);
@@ -68,7 +68,7 @@ namespace UserServiceTest.Users
 		public async Task LoginUser_Fail_UserNotFound()
 		{
 			// Arrange
-			var loginParam = new LoginParametrs("unknown.user", "SomePassword");
+			LoginParametrs loginParam = new LoginParametrs("unknown.user", "SomePassword");
 
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			repoResult.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -90,7 +90,7 @@ namespace UserServiceTest.Users
 		public async Task LoginUser_Fail_PasswordMustContainsAtLeastEightChars()
 		{
 			// Arrange
-			var loginParam = new LoginParametrs("user1", "Some12");
+			LoginParametrs loginParam = new LoginParametrs("user1", "Some12");
 
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			UserDTO user = new UserDTO(
@@ -115,7 +115,7 @@ namespace UserServiceTest.Users
 		public async Task LoginUser_Fail_PasswordMustContainsAtLeastOneNumber()
 		{
 			// Arrange
-			var loginParam = new LoginParametrs("user1", "Some");
+			LoginParametrs loginParam = new LoginParametrs("user1", "Some");
 
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			UserDTO user = new UserDTO(
@@ -140,7 +140,7 @@ namespace UserServiceTest.Users
 		public async Task LoginUser_Fail_PasswordMustContainsAtLeastOneSmallAndCapitalLetter()
 		{
 			// Arrange
-			var loginParam = new LoginParametrs("user1", "12131");
+			LoginParametrs loginParam = new LoginParametrs("user1", "12131");
 
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			UserDTO user = new UserDTO(
@@ -165,7 +165,7 @@ namespace UserServiceTest.Users
 		public async Task LoginUser_Success()
 		{
 			// Arrange
-			var loginParam = new LoginParametrs("user", "Some2323Password");
+			LoginParametrs loginParam = new LoginParametrs("user", "Some2323Password");
 
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			UserDTO user = new UserDTO(
@@ -201,7 +201,7 @@ namespace UserServiceTest.Users
 		public async Task LoginUser_Fail_InvalidPassword()
 		{
 			// Arrange
-			var loginParam = new LoginParametrs("user", "Some2323Password");
+			LoginParametrs loginParam = new LoginParametrs("user", "Some2323Password");
 
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			UserDTO user = new UserDTO(
