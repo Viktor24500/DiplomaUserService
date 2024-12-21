@@ -33,7 +33,7 @@ namespace SystemUserService.Controllers
 			return StatusCode(500);
 		}
 
-		[Route("/users/{id}")]
+		[Route("/user/{id}")]
 		[HttpGet]
 		public async Task<IActionResult> GetUser(int id)
 		{
@@ -78,7 +78,7 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		[Route("/users")]
+		[Route("/user")]
 		[HttpPost]
 		public async Task<IActionResult> CreateUser([FromBody] UserCreateRequest userCreateRequest)
 		{
@@ -104,7 +104,7 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		[Route("/users/{id}")]
+		[Route("/user/{id}")]
 		[HttpPut]
 		public async Task<IActionResult> UpdateUser([FromBody] UserUpdateRequest userUpdateRequest)
 		{

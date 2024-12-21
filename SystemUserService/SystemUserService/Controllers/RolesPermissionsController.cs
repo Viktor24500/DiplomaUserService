@@ -32,7 +32,7 @@ namespace SystemUserService.Controllers
 			return StatusCode(500);
 		}
 
-		[Route("/rolesPermissions/{id}")]
+		[Route("/rolePermissions/{id}")]
 		[HttpGet]
 		public async Task<IActionResult> GetRolePermissions(int id)
 		{
@@ -51,7 +51,7 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		[Route("/rolesPermissions")]
+		[Route("/rolePermissions")]
 		[HttpPost]
 		public async Task<IActionResult> CreateRolePermissions([FromBody] RolePermissionCreateRequest rolePermissionCreateRequest)
 		{
@@ -72,7 +72,7 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		[Route("/rolesPermissions/{rolePermissionId}")]
+		[Route("/rolePermissions/{rolePermissionId}")]
 		[HttpPut]
 		public async Task<IActionResult> UpdateRolePermissions([FromBody] RolePermissionUpdateRequest rolePermissionUpdateRequest)
 		{
