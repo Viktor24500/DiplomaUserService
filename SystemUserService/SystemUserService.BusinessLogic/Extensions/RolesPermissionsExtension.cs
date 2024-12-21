@@ -7,7 +7,7 @@ namespace SystemUserService.BusinessLogic.Extensions
 {
     public static class RolesPermissionsExtension
     {
-        public static RolesPermission MapToRolesPermissions(this RolePermissionsDTO rolePermissionsDTO)
+        public static RolePermission MapToRolesPermissions(this RolePermissionsDTO rolePermissionsDTO)
         {
             List<Permission> permissions = new List<Permission>
             {
@@ -17,7 +17,7 @@ namespace SystemUserService.BusinessLogic.Extensions
                     rolePermissionsDTO.PermissionDescription
                 )
             };
-            return new RolesPermission(
+            return new RolePermission(
                 rolePermissionsDTO.RolePermissionId,
                 rolePermissionsDTO.RolePermissionRoleId,
                 rolePermissionsDTO.RolePermissionPermissionId,
@@ -27,10 +27,10 @@ namespace SystemUserService.BusinessLogic.Extensions
                 permissions
             );
         }
-        public static List<RolesPermission> MapToRolesPermissionsCollection(this List<RolePermissionsDTO> rolePermissionsDTOList)
+        public static List<RolePermission> MapToRolesPermissionsCollection(this List<RolePermissionsDTO> rolePermissionsDTOList)
         {
-            List<RolesPermission> rolePermissionList = new List<RolesPermission>();
-            Dictionary<int, RolesPermission> rolesPermissionMap = new Dictionary<int, RolesPermission>();
+            List<RolePermission> rolePermissionList = new List<RolePermission>();
+            Dictionary<int, RolePermission> rolesPermissionMap = new Dictionary<int, RolePermission>();
 
             foreach (RolePermissionsDTO dto in rolePermissionsDTOList)
             {
@@ -51,7 +51,7 @@ namespace SystemUserService.BusinessLogic.Extensions
                 {
                     List<Permission> permissions = new List<Permission> { permission };
 
-                    RolesPermission rolesPermission = new RolesPermission(
+                    RolePermission rolesPermission = new RolePermission(
                         dto.RolePermissionId,
                         dto.RolePermissionRoleId,
                         dto.RolePermissionPermissionId,

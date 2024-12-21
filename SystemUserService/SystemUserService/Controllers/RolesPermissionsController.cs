@@ -23,7 +23,7 @@ namespace SystemUserService.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetAllRolePermissions()
 		{
-			Result<List<RolesPermission>> result = await _rolePermissionService.GetAllRolePermissions();
+			Result<List<RolePermission>> result = await _rolePermissionService.GetAllRolePermissions();
 			if (result.ErrorCode == (int)ErrorCodes.Success)
 			{
 				return Ok(result.Data);
@@ -36,7 +36,7 @@ namespace SystemUserService.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetRolePermissions(int id)
 		{
-			Result<RolesPermission> result = await _rolePermissionService.GetRolePermissionsByRoleId(id);
+			Result<RolePermission> result = await _rolePermissionService.GetRolePermissionsByRoleId(id);
 			switch (result.ErrorCode)
 			{
 				case (int)ErrorCodes.NotFound:
@@ -57,7 +57,7 @@ namespace SystemUserService.Controllers
 		{
 			RolePermissionCreateParameters rolePermissionCreateParameters = new RolePermissionCreateParameters(rolePermissionCreateRequest.RoleId,
 				rolePermissionCreateRequest.PermissionsId);
-			Result<RolesPermission> result = await _rolePermissionService.CreateRolePermissions(rolePermissionCreateParameters);
+			Result<RolePermission> result = await _rolePermissionService.CreateRolePermissions(rolePermissionCreateParameters);
 			switch (result.ErrorCode)
 			{
 				case (int)ErrorCodes.Conflict:
@@ -78,7 +78,7 @@ namespace SystemUserService.Controllers
 		{
 			RolePermissionUpdateParameters rolePermissionUpdateParameters = new RolePermissionUpdateParameters(
 				rolePermissionUpdateRequest.RolePermissionId, rolePermissionUpdateRequest.RoleId, rolePermissionUpdateRequest.PermissionId);
-			Result<RolesPermission> result = await _rolePermissionService.UpdateRolePermissions(rolePermissionUpdateParameters);
+			Result<RolePermission> result = await _rolePermissionService.UpdateRolePermissions(rolePermissionUpdateParameters);
 			switch (result.ErrorCode)
 			{
 				case (int)ErrorCodes.Success:

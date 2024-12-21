@@ -26,10 +26,10 @@ namespace SystemUserService.BusinessLogic.Services
 			_rolesRepository = rolesRepository;
 			_permissionsRepository = permissionsRepository;
 		}
-		public async Task<Result<RolesPermission>> CreateRolePermissions(RolePermissionCreateParameters rolePermissionCreateParameters)
+		public async Task<Result<RolePermission>> CreateRolePermissions(RolePermissionCreateParameters rolePermissionCreateParameters)
 		{
 			//Validate role id
-			Result<RolesPermission> result = new Result<RolesPermission>();
+			Result<RolePermission> result = new Result<RolePermission>();
 			if (IntExtension.IsNegative(rolePermissionCreateParameters.RoleId))
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -80,17 +80,17 @@ namespace SystemUserService.BusinessLogic.Services
 			return result;
 		}
 
-		public async Task<Result<List<RolesPermission>>> GetAllRolePermissions()
+		public async Task<Result<List<RolePermission>>> GetAllRolePermissions()
 		{
 			Result<List<RolePermissionsDTO>> repResult = await _rolesPermissionsRepository.GetAllRolePermissions();
-			Result<List<RolesPermission>> result = new Result<List<RolesPermission>>();
+			Result<List<RolePermission>> result = new Result<List<RolePermission>>();
 			result.Data = repResult.Data.MapToRolesPermissionsCollection();
 			return result;
 		}
 
-		public async Task<Result<RolesPermission>> GetRolePermissionsByRoleId(int id)
+		public async Task<Result<RolePermission>> GetRolePermissionsByRoleId(int id)
 		{
-			Result<RolesPermission> result = new Result<RolesPermission>();
+			Result<RolePermission> result = new Result<RolePermission>();
 			if (IntExtension.IsNegative(id))
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -119,9 +119,9 @@ namespace SystemUserService.BusinessLogic.Services
 			return result;
 		}
 
-		public async Task<Result<RolesPermission>> UpdateRolePermissions(RolePermissionUpdateParameters rolePermissionUpdateParameters)
+		public async Task<Result<RolePermission>> UpdateRolePermissions(RolePermissionUpdateParameters rolePermissionUpdateParameters)
 		{
-			Result<RolesPermission> result = new Result<RolesPermission>();
+			Result<RolePermission> result = new Result<RolePermission>();
 			if (IntExtension.IsNegative(rolePermissionUpdateParameters.RolePermissionId))
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
