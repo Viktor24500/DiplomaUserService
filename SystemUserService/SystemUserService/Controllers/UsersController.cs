@@ -95,7 +95,7 @@ namespace SystemUserService.Controllers
 				case (int)ErrorCodes.Success:
 					return Ok(result.Data);
 				case (int)ErrorCodes.Conflict:
-					return NotFound(result.ErrorMessage);
+					return Conflict(result.ErrorMessage);
 				case (int)ErrorCodes.BadRequest:
 					return BadRequest(result.ErrorMessage);
 				default:
@@ -118,7 +118,7 @@ namespace SystemUserService.Controllers
 				case (int)ErrorCodes.Success:
 					return Ok(result.Data);
 				case (int)ErrorCodes.Conflict:
-					return NotFound(result.ErrorMessage);
+					return Conflict(result.ErrorMessage);
 				case (int)ErrorCodes.BadRequest:
 					return BadRequest(result.ErrorMessage);
 				case (int)ErrorCodes.NotFound:
