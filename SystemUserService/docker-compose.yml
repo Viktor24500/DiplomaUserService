@@ -1,0 +1,105 @@
+version: "3.8"
+services:
+  webservice:
+    container_name: webservice
+    build:
+      context: ./DiplomaWebService
+      dockerfile: DiplomaWebService/DiplomaWebService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5005
+      - ConnectionStrings__BFFService=http://bffservice:5000/
+    depends_on:
+      - bffservice
+    ports:
+      - 5005:5005
+    networks:
+      - app-network
+  bffservice:
+    container_name: bffservice
+    build:
+      context: ./DiplomaBFF
+      dockerfile: DiplomaBFF/DiplomaBFF/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+#      - SystemDataUrl=http://systemdataservice:5002/
+      - ConnectionStrings__InventoryServiceUrl=http://inventoryservice:5001/
+      - ConnectionStrings__UserServiceUrl=http://userservice:5003/
+    depends_on:
+      - userservice
+      - inventoryservice
+    ports:
+      - 5000:5000
+    networks:
+      - app-network
+  userservice:
+    container_name: userservice
+    build:
+      context: ./DiplomaUserService
+      dockerfile: SystemUserService/SystemUserService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5003
+      - ConnectionStrings__Main=Data Source=sqlserver,1433; User ID=sa;Password=Your123Strong123Password; Initial Catalog=DiplomaUserServiceDB
+    depends_on:
+      - sqlserver
+    ports:
+      - 5003:5003
+    networks:
+      - app-network
+  inventoryservice:
+    container_name: inventoryservice
+    build:
+      context: ./DiplomaInventoryService
+      dockerfile: SystemInventoryService/SystemInventoryService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5001
+      - ConnectionStrings__Main=Data Source=sqlserver,1433; User ID=sa;Password=Your123Strong123Password; Initial Catalog=DiplomaInventoryServiceDB
+    depends_on:
+      - sqlserver
+    ports:
+      - 5001:5001
+    networks:
+      - app-network
+#  systemdataservice:
+#    container_name: systemdataservice
+#    build:
+#      context: ./DiplomaSystemDataService
+#      dockerfile: SystemDataService/SystemDataService/Dockerfile
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - ASPNETCORE_URLS=http://+:5002
+#      - Main=Data Source=sqlserver,1433; User ID=sa;Password=Your123Strong123Password; Initial Catalog=DiplomaSystemDataServiceDB
+#    depends_on:
+#      - sqlserver
+#    ports:
+#      - 5002:5002
+#    networks:
+#      - app-network
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Your123Strong123Password
+      - MSSQL_PID=Developer
+      - MSSQL_AGENT_ENABLED=true
+    volumes:
+      - .\sqlserver:/var/opt/mssql/data
+    ports:
+      - 1433:1433
+    networks:
+      - app-network
+networks:
+# default:
+  app-network:
+    driver: bridge
+#    internal: false
+#    attachable: true
+#    ipam:
+#      driver: default
+#      config:
+#        - subnet: 192.168.0.4/24
+#          gateway: 192.168.0.4
