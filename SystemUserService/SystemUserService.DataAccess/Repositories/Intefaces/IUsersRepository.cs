@@ -1,4 +1,5 @@
 ﻿using SystemUserService.Common.Results;
+using SystemUserService.DataAccess.DTO.Login;
 using SystemUserService.DataAccess.DTO.Users;
 
 namespace SystemUserService.DataAccess.Repositories.Intefaces
@@ -19,5 +20,6 @@ namespace SystemUserService.DataAccess.Repositories.Intefaces
 		Task<Result<UserDTO>> GetUserByName(string name);
 
 		Task<Result> UpdateLoginUser(int id, DateTime? lastLogin, string? lastToken, DateTime? tokenExpiration);
-	}
+        Task<Result<LoginDTO>> GetUserByToken(string token);
+    }
 }
