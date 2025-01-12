@@ -158,6 +158,8 @@ namespace SystemUserService.Controllers
                     return Ok(result.Data);
                 case (int)ErrorCodes.BadRequest:
                     return BadRequest(result.ErrorMessage);
+                case (int)ErrorCodes.NotFound:
+                    return NotFound(result.ErrorMessage);
                 default:
                     Utilities.HandleUnexpectedErrorCode(result);
                     return StatusCode(500);

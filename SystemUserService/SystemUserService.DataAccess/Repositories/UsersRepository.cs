@@ -550,6 +550,11 @@ namespace SystemUserService.DataAccess.Repositories
                         reader.GetInt32(reader.GetOrdinal("userId")),
                         tokenExpiration.Value);
                 }
+                if (result.Data == null)
+                {
+                    result.ErrorCode = (int)ErrorCodes.NotFound;
+                    return result;
+                }
                 return result;
             }
         }
