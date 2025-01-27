@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using SystemUserService.BusinessLogic.Entities.Logins;
 using SystemUserService.BusinessLogic.Parametrs.Login;
 using SystemUserService.BusinessLogic.Services;
 using SystemUserService.Common.Enums;
@@ -56,7 +57,7 @@ namespace UserServiceTest.Users
 			LoginParametrs loginParam = new LoginParametrs("", "");
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -78,7 +79,7 @@ namespace UserServiceTest.Users
 								.ReturnsAsync(repoResult);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -103,7 +104,7 @@ namespace UserServiceTest.Users
 								.ReturnsAsync(repoResult);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -128,7 +129,7 @@ namespace UserServiceTest.Users
 								.ReturnsAsync(repoResult);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -153,7 +154,7 @@ namespace UserServiceTest.Users
 								.ReturnsAsync(repoResult);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -189,12 +190,12 @@ namespace UserServiceTest.Users
 			.ReturnsAsync(loginRequest);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
 			Assert.AreEqual((int)ErrorCodes.Success, result.ErrorCode);
-			Assert.AreEqual(user.LastToken, result.Data);
+			Assert.AreEqual(user.LastToken, result.Data.Token);
 		}
 
 		[TestMethod]
@@ -214,7 +215,7 @@ namespace UserServiceTest.Users
 								.ReturnsAsync(repoResult);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
