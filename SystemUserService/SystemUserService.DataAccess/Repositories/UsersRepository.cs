@@ -444,7 +444,7 @@ namespace SystemUserService.DataAccess.Repositories
             }
         }
 
-        public async Task<Result> UpdateLoginUser(int id, DateTime? lastLogin, string? lastToken, DateTime? tokenExpiration)
+        public async Task<Result> UpdateLoginUser(int id, DateTime lastLogin, string lastToken, DateTime tokenExpiration)
         {
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -454,30 +454,9 @@ namespace SystemUserService.DataAccess.Repositories
                 SqlCommand command = new SqlCommand("updateLoginUser", connection);
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("@id", id);
-                if (lastLogin != null)
-                {
-                    command.Parameters.AddWithValue("@lastLogin", lastLogin);
-                }
-                else
-                {
-                    command.Parameters.AddWithValue("@lastLogin", DBNull.Value);
-                }
-                if (tokenExpiration != null)
-                {
-                    command.Parameters.AddWithValue("@tokenExpiration", lastLogin);
-                }
-                else
-                {
-                    command.Parameters.AddWithValue("@tokenExpiration", DBNull.Value);
-                }
-                if (lastToken != null)
-                {
-                    command.Parameters.AddWithValue("@lastToken", lastToken);
-                }
-                else
-                {
-                    command.Parameters.AddWithValue("@lastToken", DBNull.Value);
-                }
+                command.Parameters.AddWithValue("@lastLogin", lastLogin);
+                command.Parameters.AddWithValue("@tokenExpiration", lastLogin);
+                command.Parameters.AddWithValue("@lastToken", lastToken);
 
                 if (command.ExecuteNonQuery() <= 0)
                 {
@@ -546,8 +525,20 @@ namespace SystemUserService.DataAccess.Repositories
                     {
                         tokenExpiration = reader.GetDateTime(reader.GetOrdinal("tokenExpiration"));
                     }
+                    string? lastToken;
+                    if (reader.IsDBNull(reader.GetOrdinal("tokenExpiration")))
+                    {
+                        lastToken = null;
+                        result.ErrorCode = (int)ErrorCodes.InternalServerError;
+                        result.ErrorMessage = "token is null";
+                        return result;
+                    }
+                    else
+                    {
+                        lastToken = reader.GetString(reader.GetOrdinal("tokenExpiration"));
+                    }
                     result.Data = new LoginDTO(
-                        reader.GetInt32(reader.GetOrdinal("userId")),
+                        reader.GetInt32(reader.GetOrdinal("userId")), lastToken,
                         tokenExpiration.Value);
                 }
                 if (result.Data == null)

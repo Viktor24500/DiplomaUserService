@@ -197,10 +197,10 @@ namespace SystemUserService.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Result<string>> LoginUser(LoginParametrs loginParam)
+        public async Task<Result<Login>> LoginUser(LoginParametrs loginParam)
         {
             //TODO YP: тут краще винести все в приватні методи з навами щоб було читабельне флоу
-            Result<string> result = new Result<string>();
+            Result<Login> result = new Result<Login>();
             if (string.IsNullOrWhiteSpace(loginParam.Name) || string.IsNullOrWhiteSpace(loginParam.Password))
             {
                 result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -255,7 +255,9 @@ namespace SystemUserService.BusinessLogic.Services
                     _logger.LogError(result.ErrorMessage);
                     return result;
                 }
-                result.Data = repResult.Data.LastToken;
+                result.Data.Token = repResult.Data.LastToken;
+                result.Data.Id = userId;
+                result.Data.TokenExpiration = tokenExpiration;
             }
             return result;
         }

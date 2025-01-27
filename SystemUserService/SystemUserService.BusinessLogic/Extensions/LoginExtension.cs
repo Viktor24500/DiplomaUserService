@@ -7,7 +7,7 @@ namespace SystemUserService.BusinessLogic.Extensions
     {
         public static Login MapToLogin(this LoginDTO loginDTO)
         {
-            return new Login(loginDTO.Id, loginDTO.TokenExpiration);
+            return new Login(loginDTO.Id, loginDTO.TokenExpiration, loginDTO.Token);
         }
     }
 }
