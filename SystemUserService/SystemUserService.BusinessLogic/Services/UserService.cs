@@ -239,11 +239,14 @@ namespace SystemUserService.BusinessLogic.Services
 			//TODO YP: я вже писав що це не повинно бути частиною юзера це повинні бути сесії юзера і зберігатись в окремій таблиці
 			string token = Guid.NewGuid().ToString();
 			DateTime lastLogin = DateTime.Now;
-
-			DateTime tokenExpiration = lastLogin.AddMinutes(double.Parse(_configuration["TokenExpirationTime"]));
+			//TimeZoneInfo timeZone = TimeZoneInfo.Local;
+			//TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time"); //local
+			TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv");
+			DateTime localDateTime = TimeZoneInfo.ConvertTime(lastLogin, timeZone);
+			DateTime tokenExpiration = localDateTime.AddMinutes(double.Parse(_configuration["TokenExpirationTime"]));
 
 			int userId = repResult.Data.UserId;
-			Result repUpdateLoginResult = await _usersRepository.UpdateLoginUser(userId, lastLogin, token, tokenExpiration);
+			Result repUpdateLoginResult = await _usersRepository.UpdateLoginUser(userId, localDateTime, token, tokenExpiration);
 
 			if (repUpdateLoginResult.ErrorCode == (int)ErrorCodes.Success)
 			{

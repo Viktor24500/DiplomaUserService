@@ -84,11 +84,16 @@ namespace SystemUserService.Controllers
 		public async Task<IActionResult> CreateUser([FromBody] UserCreateRequest userCreateRequest)
 		{
 			DateTime dateRegistered = DateTime.Now;
+			//TimeZoneInfo timeZone = TimeZoneInfo.Local;
+			//TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time"); //local
+			TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv");
+			DateTime dateRegisteredLocalDateTime = TimeZoneInfo.ConvertTime(dateRegistered, timeZone);
+
 			DateTime? lastLogin = null;
 			UserCreateParameters userCreateParam = new UserCreateParameters(userCreateRequest.Username, userCreateRequest.UserPassword,
 				userCreateRequest.Email, userCreateRequest.FirstName,
 				userCreateRequest.LastName, userCreateRequest.FatherName,
-				dateRegistered, lastLogin, userCreateRequest.IsActive);
+				dateRegisteredLocalDateTime, lastLogin, userCreateRequest.IsActive);
 			Result<User> result = await _userService.CreateUser(userCreateParam);
 
 			switch (result.ErrorCode)

@@ -168,11 +168,15 @@ namespace UserServiceTest.Users
 			// Arrange
 			LoginParametrs loginParam = new LoginParametrs("user", "Some2323Password");
 
+			DateTime dateRegistered = DateTime.Now;
+			TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time"); //local
+			DateTime dateRegisteredLocalDateTime = TimeZoneInfo.ConvertTime(dateRegistered, timeZone);
+
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			UserDTO user = new UserDTO(
 				1, "user", "b440d283f448be5df4322477fc648ed8dfd5c4c983f0703ab84bec787b61799b", "john.doe@example.com",
-				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true
+				"John", "Doe", "Michael", dateRegisteredLocalDateTime, dateRegisteredLocalDateTime.AddHours(-1),
+				"xyz98327abc", dateRegisteredLocalDateTime.AddDays(1), true
 				);
 			repoResult.Data = user;
 			_mockUsersRepository.Setup(repo => repo.GetUserByName(loginParam.Name))
