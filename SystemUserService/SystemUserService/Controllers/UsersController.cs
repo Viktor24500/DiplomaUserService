@@ -146,6 +146,8 @@ namespace SystemUserService.Controllers
 					return Ok(result.Data);
 				case (int)ErrorCodes.BadRequest:
 					return BadRequest(result.ErrorMessage);
+				case (int)ErrorCodes.Forbidden:
+					return StatusCode(403, result.ErrorMessage);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
 					return StatusCode(500);
