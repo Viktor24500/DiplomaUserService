@@ -52,7 +52,7 @@ namespace SystemUserService.Controllers
 		}
 
 
-		[Route("/userRoleByUserId/{id}")]
+		[Route("/userRolesByUserId/{id}")]
 		[HttpGet]
 		public async Task<IActionResult> GetUserRolesByUserId(int id)
 		{
@@ -71,7 +71,7 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		[Route("/userRole")]
+		[Route("/userRoles")]
 		[HttpPost]
 		public async Task<IActionResult> CreateUserRoles([FromBody] UserRoleCreateRequest userRoleCreateRequst)
 		{
@@ -92,7 +92,7 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		[Route("/userRole/{userRoleId}")]
+		[Route("/userRoles/{userRoleId}")]
 		[HttpPut]
 		public async Task<IActionResult> UpdateUserRoles([FromBody] UserRoleUpdateRequest userRoleUpdateRequest)
 		{

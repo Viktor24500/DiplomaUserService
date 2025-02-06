@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 using System.Text;
+using SystemUserService.BusinessLogic.Entities.Logins;
 using SystemUserService.BusinessLogic.Entities.Users;
 using SystemUserService.BusinessLogic.Extensions;
 using SystemUserService.BusinessLogic.Parametrs.Login;
@@ -9,6 +10,7 @@ using SystemUserService.BusinessLogic.Services.Interfaces;
 using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
 using SystemUserService.Common.Validators;
+using SystemUserService.DataAccess.DTO.Login;
 using SystemUserService.DataAccess.DTO.Users;
 using SystemUserService.DataAccess.Repositories.Intefaces;
 using SystemUserService.Request.User;
@@ -195,10 +197,10 @@ namespace SystemUserService.BusinessLogic.Services
 			return result;
 		}
 
-		public async Task<Result<string>> LoginUser(LoginParametrs loginParam)
+		public async Task<Result<Login>> LoginUser(LoginParametrs loginParam)
 		{
 			//TODO YP: тут краще винести все в приватні методи з навами щоб було читабельне флоу
-			Result<string> result = new Result<string>();
+			Result<Login> result = new Result<Login>();
 			if (string.IsNullOrWhiteSpace(loginParam.Name) || string.IsNullOrWhiteSpace(loginParam.Password))
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -237,11 +239,14 @@ namespace SystemUserService.BusinessLogic.Services
 			//TODO YP: я вже писав що це не повинно бути частиною юзера це повинні бути сесії юзера і зберігатись в окремій таблиці
 			string token = Guid.NewGuid().ToString();
 			DateTime lastLogin = DateTime.Now;
-
-			DateTime tokenExpiration = lastLogin.AddMinutes(double.Parse(_configuration["TokenExpirationTime"]));
+			//TimeZoneInfo timeZone = TimeZoneInfo.Local;
+			//TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time"); //local
+			TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv");
+			DateTime localDateTime = TimeZoneInfo.ConvertTime(lastLogin, timeZone);
+			DateTime tokenExpiration = localDateTime.AddMinutes(double.Parse(_configuration["TokenExpirationTime"]));
 
 			int userId = repResult.Data.UserId;
-			Result repUpdateLoginResult = await _usersRepository.UpdateLoginUser(userId, lastLogin, token, tokenExpiration);
+			Result repUpdateLoginResult = await _usersRepository.UpdateLoginUser(userId, localDateTime, token, tokenExpiration);
 
 			if (repUpdateLoginResult.ErrorCode == (int)ErrorCodes.Success)
 			{
@@ -253,7 +258,7 @@ namespace SystemUserService.BusinessLogic.Services
 					_logger.LogError(result.ErrorMessage);
 					return result;
 				}
-				result.Data = repResult.Data.LastToken;
+				result.Data = new Login(userId, tokenExpiration, repResult.Data.LastToken);
 			}
 			return result;
 		}
@@ -318,6 +323,24 @@ namespace SystemUserService.BusinessLogic.Services
 					return result;
 				}
 				result.Data = repResult.Data.MapToUser();
+			}
+			return result;
+		}
+
+		public async Task<Result<Login>> GetUserByToken(string token)
+		{
+			Result<Login> result = new Result<Login>();
+			if (string.IsNullOrWhiteSpace(token))
+			{
+				result.ErrorCode = (int)ErrorCodes.BadRequest;
+				result.ErrorMessage = "token can't be null or empty";
+				_logger.LogError(result.ErrorMessage);
+				return result;
+			}
+			Result<LoginDTO> repResult = await _usersRepository.GetUserByToken(token);
+			if (repResult.ErrorCode == (int)ErrorCodes.Success)
+			{
+				result.Data = repResult.Data.MapToLogin();
 			}
 			return result;
 		}

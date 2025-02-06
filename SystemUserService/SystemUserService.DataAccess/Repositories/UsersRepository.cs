@@ -5,6 +5,7 @@ using SystemUserService.Common.Results;
 using SystemUserService.DataAccess.DTO.Users;
 using SystemUserService.DataAccess.Repositories.Intefaces;
 using SystemUserService.Common.Enums;
+using SystemUserService.DataAccess.DTO.Login;
 
 namespace SystemUserService.DataAccess.Repositories
 {
@@ -443,7 +444,7 @@ namespace SystemUserService.DataAccess.Repositories
 			}
 		}
 
-		public async Task<Result> UpdateLoginUser(int id, DateTime? lastLogin, string? lastToken, DateTime? tokenExpiration)
+		public async Task<Result> UpdateLoginUser(int id, DateTime lastLogin, string lastToken, DateTime tokenExpiration)
 		{
 			await using (SqlConnection connection = new SqlConnection(_connectionString))
 			{
@@ -453,30 +454,9 @@ namespace SystemUserService.DataAccess.Repositories
 				SqlCommand command = new SqlCommand("updateLoginUser", connection);
 				command.CommandType = CommandType.StoredProcedure;
 				command.Parameters.AddWithValue("@id", id);
-				if (lastLogin != null)
-				{
-					command.Parameters.AddWithValue("@lastLogin", lastLogin);
-				}
-				else
-				{
-					command.Parameters.AddWithValue("@lastLogin", DBNull.Value);
-				}
-				if (tokenExpiration != null)
-				{
-					command.Parameters.AddWithValue("@tokenExpiration", lastLogin);
-				}
-				else
-				{
-					command.Parameters.AddWithValue("@tokenExpiration", DBNull.Value);
-				}
-				if (lastToken != null)
-				{
-					command.Parameters.AddWithValue("@lastToken", lastToken);
-				}
-				else
-				{
-					command.Parameters.AddWithValue("@lastToken", DBNull.Value);
-				}
+				command.Parameters.AddWithValue("@lastLogin", lastLogin);
+				command.Parameters.AddWithValue("@tokenExpiration", lastLogin);
+				command.Parameters.AddWithValue("@lastToken", lastToken);
 
 				if (command.ExecuteNonQuery() <= 0)
 				{
@@ -515,6 +495,57 @@ namespace SystemUserService.DataAccess.Repositories
 				{
 					result.ErrorCode = (int)ErrorCodes.NotFound;
 					result.ErrorMessage = $"User with {id} not found";
+					return result;
+				}
+				return result;
+			}
+		}
+		public async Task<Result<LoginDTO>> GetUserByToken(string token)
+		{
+			await using (SqlConnection connection = new SqlConnection(_connectionString))
+			{
+				Result<LoginDTO> result = new Result<LoginDTO>();
+				connection.Open();
+
+				SqlCommand command = new SqlCommand("getUserByToken", connection);
+				command.CommandType = CommandType.StoredProcedure;
+
+				command.Parameters.AddWithValue("@token", token);
+				await using (SqlDataReader reader = command.ExecuteReader())
+				{
+					while (reader.Read())
+					{
+						DateTime? tokenExpiration;
+						if (reader.IsDBNull(reader.GetOrdinal("tokenExpiration")))
+						{
+							tokenExpiration = null;
+							result.ErrorCode = (int)ErrorCodes.InternalServerError;
+							result.ErrorMessage = "token expiration is null";
+							return result;
+						}
+						else
+						{
+							tokenExpiration = reader.GetDateTime(reader.GetOrdinal("tokenExpiration"));
+						}
+						string? lastToken;
+						if (reader.IsDBNull(reader.GetOrdinal("token")))
+						{
+							lastToken = null;
+							result.ErrorCode = (int)ErrorCodes.InternalServerError;
+							result.ErrorMessage = "token is null";
+							return result;
+						}
+						else
+						{
+							lastToken = reader.GetString(reader.GetOrdinal("token"));
+						}
+						result.Data = new LoginDTO(
+						reader.GetInt32(reader.GetOrdinal("userId")), lastToken, tokenExpiration.Value);
+					}
+				}
+				if (result.Data == null)
+				{
+					result.ErrorCode = (int)ErrorCodes.NotFound;
 					return result;
 				}
 				return result;

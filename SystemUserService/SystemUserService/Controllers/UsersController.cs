@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SystemUserService.BusinessLogic.Entities.Logins;
 using SystemUserService.BusinessLogic.Entities.Users;
 using SystemUserService.BusinessLogic.Parametrs.Login;
 using SystemUserService.BusinessLogic.Services.Interfaces;
@@ -33,7 +34,7 @@ namespace SystemUserService.Controllers
 			return StatusCode(500);
 		}
 
-		[Route("/user/{id}")]
+		[Route("/users/{id}")]
 		[HttpGet]
 		public async Task<IActionResult> GetUser(int id)
 		{
@@ -78,16 +79,21 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		[Route("/user")]
+		[Route("/users")]
 		[HttpPost]
 		public async Task<IActionResult> CreateUser([FromBody] UserCreateRequest userCreateRequest)
 		{
 			DateTime dateRegistered = DateTime.Now;
+			//TimeZoneInfo timeZone = TimeZoneInfo.Local;
+			//TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time"); //local
+			TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv");
+			DateTime dateRegisteredLocalDateTime = TimeZoneInfo.ConvertTime(dateRegistered, timeZone);
+
 			DateTime? lastLogin = null;
 			UserCreateParameters userCreateParam = new UserCreateParameters(userCreateRequest.Username, userCreateRequest.UserPassword,
 				userCreateRequest.Email, userCreateRequest.FirstName,
 				userCreateRequest.LastName, userCreateRequest.FatherName,
-				dateRegistered, lastLogin, userCreateRequest.IsActive);
+				dateRegisteredLocalDateTime, lastLogin, userCreateRequest.IsActive);
 			Result<User> result = await _userService.CreateUser(userCreateParam);
 
 			switch (result.ErrorCode)
@@ -104,7 +110,7 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		[Route("/user/{id}")]
+		[Route("/users/{id}")]
 		[HttpPut]
 		public async Task<IActionResult> UpdateUser([FromBody] UserUpdateRequest userUpdateRequest)
 		{
@@ -133,13 +139,32 @@ namespace SystemUserService.Controllers
 		public async Task<IActionResult> Login([FromBody] LoginRequest login)
 		{
 			LoginParametrs loginParam = new LoginParametrs(login.Name, login.Password);
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 			switch (result.ErrorCode)
 			{
 				case (int)ErrorCodes.Success:
 					return Ok(result.Data);
 				case (int)ErrorCodes.BadRequest:
 					return BadRequest(result.ErrorMessage);
+				default:
+					Utilities.HandleUnexpectedErrorCode(result);
+					return StatusCode(500);
+			}
+		}
+
+		[HttpGet]
+		[Route("/user/{token}")]
+		public async Task<IActionResult> GetUserByToken(string token)
+		{
+			Result<Login> result = await _userService.GetUserByToken(token);
+			switch (result.ErrorCode)
+			{
+				case (int)ErrorCodes.Success:
+					return Ok(result.Data);
+				case (int)ErrorCodes.BadRequest:
+					return BadRequest(result.ErrorMessage);
+				case (int)ErrorCodes.NotFound:
+					return NotFound(result.ErrorMessage);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
 					return StatusCode(500);

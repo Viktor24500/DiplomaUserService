@@ -32,7 +32,7 @@ namespace SystemUserService.Controllers
 			return StatusCode(500);
 		}
 
-		[Route("/role/{id}")]
+		[Route("/roles/{id}")]
 		[HttpGet]
 		public async Task<IActionResult> GetRole(int id)
 		{
@@ -52,7 +52,7 @@ namespace SystemUserService.Controllers
 
 		}
 
-		[Route("/role")]
+		[Route("/roles")]
 		[HttpPost]
 		public async Task<IActionResult> CreateRole(RoleCreateRequest createRequest)
 		{
@@ -74,7 +74,7 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		[Route("/role/{id}")]
+		[Route("/roles/{id}")]
 		[HttpPut]
 		public async Task<IActionResult> UpdateRole(RoleUpdateRequest updateRequest)
 		{

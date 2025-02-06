@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using SystemUserService.BusinessLogic.Entities.Logins;
 using SystemUserService.BusinessLogic.Parametrs.Login;
 using SystemUserService.BusinessLogic.Services;
 using SystemUserService.Common.Enums;
@@ -56,7 +57,7 @@ namespace UserServiceTest.Users
 			LoginParametrs loginParam = new LoginParametrs("", "");
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -78,7 +79,7 @@ namespace UserServiceTest.Users
 								.ReturnsAsync(repoResult);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -103,7 +104,7 @@ namespace UserServiceTest.Users
 								.ReturnsAsync(repoResult);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -128,7 +129,7 @@ namespace UserServiceTest.Users
 								.ReturnsAsync(repoResult);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -153,7 +154,7 @@ namespace UserServiceTest.Users
 								.ReturnsAsync(repoResult);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -167,11 +168,15 @@ namespace UserServiceTest.Users
 			// Arrange
 			LoginParametrs loginParam = new LoginParametrs("user", "Some2323Password");
 
+			DateTime dateRegistered = DateTime.Now;
+			TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time"); //local
+			DateTime dateRegisteredLocalDateTime = TimeZoneInfo.ConvertTime(dateRegistered, timeZone);
+
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			UserDTO user = new UserDTO(
 				1, "user", "b440d283f448be5df4322477fc648ed8dfd5c4c983f0703ab84bec787b61799b", "john.doe@example.com",
-				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true
+				"John", "Doe", "Michael", dateRegisteredLocalDateTime, dateRegisteredLocalDateTime.AddHours(-1),
+				"xyz98327abc", dateRegisteredLocalDateTime.AddDays(1), true
 				);
 			repoResult.Data = user;
 			_mockUsersRepository.Setup(repo => repo.GetUserByName(loginParam.Name))
@@ -189,12 +194,12 @@ namespace UserServiceTest.Users
 			.ReturnsAsync(loginRequest);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
 			Assert.AreEqual((int)ErrorCodes.Success, result.ErrorCode);
-			Assert.AreEqual(user.LastToken, result.Data);
+			Assert.AreEqual(user.LastToken, result.Data.Token);
 		}
 
 		[TestMethod]
@@ -214,7 +219,7 @@ namespace UserServiceTest.Users
 								.ReturnsAsync(repoResult);
 
 			// Act
-			Result<string> result = await _userService.LoginUser(loginParam);
+			Result<Login> result = await _userService.LoginUser(loginParam);
 
 			// Assert
 			Assert.IsNotNull(result);
