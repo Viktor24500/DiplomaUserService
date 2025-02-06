@@ -217,6 +217,13 @@ namespace SystemUserService.BusinessLogic.Services
 				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
+			if (repResult.Data.IsActive == false)
+			{
+				result.ErrorCode = (int)ErrorCodes.Forbidden;
+				result.ErrorMessage = $"User with {loginParam.Name} is inactive";
+				_logger.LogError(result.ErrorMessage);
+				return result;
+			}
 
 			//check password pattern
 			if (_passwordChecks.isPasswordPatternValid(loginParam.Password).ErrorCode == (int)ErrorCodes.BadRequest)
