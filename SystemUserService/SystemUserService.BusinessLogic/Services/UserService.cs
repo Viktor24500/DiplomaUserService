@@ -265,7 +265,19 @@ namespace SystemUserService.BusinessLogic.Services
 					_logger.LogError(result.ErrorMessage);
 					return result;
 				}
-				result.Data = new Login(userId, tokenExpiration, repResult.Data.LastToken);
+				if (string.IsNullOrEmpty(repResult.Data.LastToken))
+				{
+					result.ErrorCode = (int)ErrorCodes.NotFound;
+					result.ErrorMessage = "Token wasn't updated";
+					_logger.LogError(result.ErrorMessage);
+					return result;
+				}
+				Result<LoginDTO> repLoginResult = await _usersRepository.GetUserByToken(repResult.Data.LastToken);
+				if (repResult.ErrorCode == (int)ErrorCodes.Success)
+				{
+					result.Data = repLoginResult.Data.MapToLogin();
+				}
+				return result;
 			}
 			return result;
 		}

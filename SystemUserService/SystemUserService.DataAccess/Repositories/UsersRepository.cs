@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
+using SystemUserService.Common.Enums;
 using SystemUserService.Common.Results;
+using SystemUserService.DataAccess.DTO.Login;
 using SystemUserService.DataAccess.DTO.Users;
 using SystemUserService.DataAccess.Repositories.Intefaces;
-using SystemUserService.Common.Enums;
-using SystemUserService.DataAccess.DTO.Login;
 
 namespace SystemUserService.DataAccess.Repositories
 {
@@ -540,7 +540,10 @@ namespace SystemUserService.DataAccess.Repositories
 							lastToken = reader.GetString(reader.GetOrdinal("token"));
 						}
 						result.Data = new LoginDTO(
-						reader.GetInt32(reader.GetOrdinal("userId")), lastToken, tokenExpiration.Value);
+						reader.GetInt32(reader.GetOrdinal("userId")),
+						reader.GetInt32(reader.GetOrdinal("roleId")),
+						lastToken,
+						tokenExpiration.Value);
 					}
 				}
 				if (result.Data == null)
