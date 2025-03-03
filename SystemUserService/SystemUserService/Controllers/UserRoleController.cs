@@ -32,6 +32,19 @@ namespace SystemUserService.Controllers
 			return StatusCode(500);
 		}
 
+		[Route("/searchUserRoles/{name}")]
+		[HttpGet]
+		public async Task<IActionResult> SearchUserRolesByUserName(string name)
+		{
+			Result<List<UserRole>> result = await _userRoleService.SearchUserRolesByUserName(name);
+			if (result.ErrorCode == (int)ErrorCodes.Success)
+			{
+				return Ok(result.Data);
+			}
+			Utilities.HandleUnexpectedErrorCode(result);
+			return StatusCode(500);
+		}
+
 		[Route("/userRolesByRoleId/{id}")]
 		[HttpGet]
 		public async Task<IActionResult> GetUserRolesByRoleId(int id)

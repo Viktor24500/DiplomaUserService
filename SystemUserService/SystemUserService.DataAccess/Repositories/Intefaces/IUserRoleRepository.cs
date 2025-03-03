@@ -13,5 +13,6 @@ namespace SystemUserService.DataAccess.Repositories.Intefaces
 		public Task<Result> UpdateUserRole(int userRoleId, int userId, int roleId);
 
 		public Task<Result<UserRoleDTO>> GetUserRoleByUserRoleId(int userRoleId);
+		Task<Result<List<UserRoleDTO>>> SearchUserRolesByUserName(string name);
 	}
 }
