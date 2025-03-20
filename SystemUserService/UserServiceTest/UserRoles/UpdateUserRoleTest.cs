@@ -46,7 +46,7 @@ namespace UserServiceTest.UserRoles
 			UserDTO userDTO = new UserDTO(
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 			Result<UserDTO> userRes = new Result<UserDTO>();
 			userRes.Data = userDTO;
 
@@ -61,7 +61,7 @@ namespace UserServiceTest.UserRoles
 				"john.doe@example.com", "John", "Doe",
 				"Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
 				DateTime.UtcNow.AddDays(1), "xyz98327abc",
-				true);
+				true, "0966345678");
 			Result<UserRoleDTO> userRoleRes = new Result<UserRoleDTO>();
 			userRoleRes.Data = userRoleDTO;
 
@@ -89,7 +89,7 @@ namespace UserServiceTest.UserRoles
 			UserDTO userDTO = new UserDTO(
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 			Result<UserDTO> userRes = new Result<UserDTO>();
 			userRes.Data = userDTO;
 
@@ -104,7 +104,7 @@ namespace UserServiceTest.UserRoles
 				"john.doe@example.com", "John", "Doe",
 				"Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
 				DateTime.UtcNow.AddDays(1), "xyz98327abc",
-				true);
+				true, "0966345678");
 			Result<UserRoleDTO> userRoleRes = new Result<UserRoleDTO>();
 			userRoleRes.Data = userRoleDTO;
 
@@ -131,7 +131,7 @@ namespace UserServiceTest.UserRoles
 			UserDTO userDTO = new UserDTO(
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 			Result<UserDTO> userRes = new Result<UserDTO>();
 			userRes.Data = userDTO;
 
@@ -146,7 +146,7 @@ namespace UserServiceTest.UserRoles
 				"john.doe@example.com", "John", "Doe",
 				"Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
 				DateTime.UtcNow.AddDays(1), "xyz98327abc",
-				true);
+				true, "0966345678");
 			Result<UserRoleDTO> userRoleRes = new Result<UserRoleDTO>();
 			userRoleRes.Data = userRoleDTO;
 
@@ -184,7 +184,7 @@ namespace UserServiceTest.UserRoles
 				"john.doe@example.com", "John", "Doe",
 				"Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
 				DateTime.UtcNow.AddDays(1), "xyz98327abc",
-				true);
+				true, "0966345678");
 			Result<UserRoleDTO> userRoleRes = new Result<UserRoleDTO>();
 			userRoleRes.Data = userRoleDTO;
 
@@ -218,14 +218,14 @@ namespace UserServiceTest.UserRoles
 				"john.doe@example.com", "John", "Doe",
 				"Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
 				DateTime.UtcNow.AddDays(1), "xyz98327abc",
-				true);
+				true, "0966345678");
 			Result<UserRoleDTO> userRoleRes = new Result<UserRoleDTO>();
 			userRoleRes.Data = userRoleDTO;
 
 			UserDTO userDTO = new UserDTO(
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 			Result<UserDTO> userRes = new Result<UserDTO>();
 			userRes.Data = userDTO;
 
@@ -254,7 +254,7 @@ namespace UserServiceTest.UserRoles
 			UserDTO userDTO = new UserDTO(
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 			Result<UserDTO> userRes = new Result<UserDTO>();
 			userRes.Data = userDTO;
 
@@ -284,7 +284,7 @@ namespace UserServiceTest.UserRoles
 			UserDTO userDTO = new UserDTO(
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 			Result<UserDTO> userRes = new Result<UserDTO>();
 			userRes.Data = userDTO;
 
@@ -297,7 +297,7 @@ namespace UserServiceTest.UserRoles
 				1, "Admin", null,
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				DateTime.UtcNow.AddDays(1), "xyz98327abc", true);
+				DateTime.UtcNow.AddDays(1), "xyz98327abc", true, "0966345678");
 			Result<UserRoleDTO> userRoleRes = new Result<UserRoleDTO>();
 			userRoleRes.Data = userRole;
 

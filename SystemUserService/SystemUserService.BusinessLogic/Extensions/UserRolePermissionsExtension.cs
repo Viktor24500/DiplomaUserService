@@ -15,8 +15,8 @@ namespace SystemUserService.BusinessLogic.Extensions
 			);
 
 			User user = new User(dto.UserId, dto.Username, dto.UserPassword, dto.Email,
-				dto.FirstName, dto.LastName, dto.FatherName, dto.DateRegistered,
-				dto.LastLogin, dto.TokenExpiration, dto.IsActive, dto.LastToken);
+				dto.FirstName, dto.LastName, dto.Comment, dto.DateRegistered,
+				dto.LastLogin, dto.TokenExpiration, dto.IsActive, dto.LastToken, dto.PhoneNumber);
 
 			List<Permission> permissions = new List<Permission>
 			{
@@ -46,10 +46,10 @@ namespace SystemUserService.BusinessLogic.Extensions
 				User user = new User(
 					dto.UserId, dto.Username, dto.UserPassword,
 					dto.Email, dto.FirstName,
-					dto.LastName, dto.FatherName,
+					dto.LastName, dto.Comment,
 					dto.DateRegistered, dto.LastLogin,
 					dto.TokenExpiration, dto.IsActive,
-					dto.LastToken
+					dto.LastToken, dto.PhoneNumber
 				);
 
 				// Create the Role object

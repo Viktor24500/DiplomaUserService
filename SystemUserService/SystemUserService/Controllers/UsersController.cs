@@ -92,8 +92,8 @@ namespace SystemUserService.Controllers
 			DateTime? lastLogin = null;
 			UserCreateParameters userCreateParam = new UserCreateParameters(userCreateRequest.Username, userCreateRequest.UserPassword,
 				userCreateRequest.Email, userCreateRequest.FirstName,
-				userCreateRequest.LastName, userCreateRequest.FatherName,
-				dateRegisteredLocalDateTime, lastLogin, userCreateRequest.IsActive);
+				userCreateRequest.LastName, userCreateRequest.Comment, userCreateRequest.IsActive,
+				dateRegisteredLocalDateTime, lastLogin, userCreateRequest.PhoneNumber);
 			Result<User> result = await _userService.CreateUser(userCreateParam);
 
 			switch (result.ErrorCode)
@@ -115,8 +115,8 @@ namespace SystemUserService.Controllers
 		public async Task<IActionResult> UpdateUser([FromBody] UserUpdateRequest userUpdateRequest)
 		{
 			UserUpdateParameters userUpdateParam = new UserUpdateParameters(userUpdateRequest.Id,
-				userUpdateRequest.Email, userUpdateRequest.FirstName, userUpdateRequest.LastName, userUpdateRequest.FatherName,
-				userUpdateRequest.IsActive);
+				userUpdateRequest.Email, userUpdateRequest.FirstName, userUpdateRequest.LastName, userUpdateRequest.Comment,
+				userUpdateRequest.IsActive, userUpdateRequest.PhoneNumber);
 			Result<User> result = await _userService.UpdateUser(userUpdateParam);
 
 			switch (result.ErrorCode)

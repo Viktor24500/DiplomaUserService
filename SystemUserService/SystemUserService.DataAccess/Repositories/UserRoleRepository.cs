@@ -63,14 +63,14 @@ namespace SystemUserService.DataAccess.Repositories
 
 					while (reader.Read())
 					{
-						string? fatherName;
-						if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+						string? comments;
+						if (reader.IsDBNull(reader.GetOrdinal("comments")))
 						{
-							fatherName = null;
+							comments = null;
 						}
 						else
 						{
-							fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+							comments = reader.GetString(reader.GetOrdinal("comments"));
 						}
 						DateTime? lastLogin;
 						if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
@@ -121,12 +121,13 @@ namespace SystemUserService.DataAccess.Repositories
 							reader.GetString(reader.GetOrdinal("email")),
 							reader.GetString(reader.GetOrdinal("firstName")),
 							reader.GetString(reader.GetOrdinal("lastName")),
-							fatherName,
+							comments,
 							reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
 							lastLogin,
 							tokenExpiration,
 							lastToken,
-							reader.GetBoolean(reader.GetOrdinal("isActive"))
+							reader.GetBoolean(reader.GetOrdinal("isActive")),
+							reader.GetString(reader.GetOrdinal("phoneNumber"))
 						);
 
 						result.Data.Add(userRole);
@@ -152,14 +153,14 @@ namespace SystemUserService.DataAccess.Repositories
 
 					while (reader.Read())
 					{
-						string? fatherName;
-						if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+						string? comments;
+						if (reader.IsDBNull(reader.GetOrdinal("comments")))
 						{
-							fatherName = null;
+							comments = null;
 						}
 						else
 						{
-							fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+							comments = reader.GetString(reader.GetOrdinal("comments"));
 						}
 						DateTime? lastLogin;
 						if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
@@ -210,12 +211,13 @@ namespace SystemUserService.DataAccess.Repositories
 							reader.GetString(reader.GetOrdinal("email")),
 							reader.GetString(reader.GetOrdinal("firstName")),
 							reader.GetString(reader.GetOrdinal("lastName")),
-							fatherName,
+							comments,
 							reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
 							lastLogin,
 							tokenExpiration,
 							lastToken,
-							reader.GetBoolean(reader.GetOrdinal("isActive"))
+							reader.GetBoolean(reader.GetOrdinal("isActive")),
+							reader.GetString(reader.GetOrdinal("phoneNumber"))
 						);
 
 						result.Data.Add(userRole);
@@ -240,14 +242,14 @@ namespace SystemUserService.DataAccess.Repositories
 
 					while (reader.Read())
 					{
-						string? fatherName;
-						if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+						string? comments;
+						if (reader.IsDBNull(reader.GetOrdinal("comments")))
 						{
-							fatherName = null;
+							comments = null;
 						}
 						else
 						{
-							fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+							comments = reader.GetString(reader.GetOrdinal("comments"));
 						}
 						DateTime? lastLogin;
 						if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
@@ -298,12 +300,13 @@ namespace SystemUserService.DataAccess.Repositories
 							reader.GetString(reader.GetOrdinal("email")),
 							reader.GetString(reader.GetOrdinal("firstName")),
 							reader.GetString(reader.GetOrdinal("lastName")),
-							fatherName,
+							comments,
 							reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
 							lastLogin,
 							tokenExpiration,
 							lastToken,
-							reader.GetBoolean(reader.GetOrdinal("isActive"))
+							reader.GetBoolean(reader.GetOrdinal("isActive")),
+							reader.GetString(reader.GetOrdinal("phoneNumber"))
 						);
 					}
 
@@ -326,14 +329,14 @@ namespace SystemUserService.DataAccess.Repositories
 
 					while (reader.Read())
 					{
-						string? fatherName;
-						if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+						string? comments;
+						if (reader.IsDBNull(reader.GetOrdinal("comments")))
 						{
-							fatherName = null;
+							comments = null;
 						}
 						else
 						{
-							fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+							comments = reader.GetString(reader.GetOrdinal("comments"));
 						}
 						DateTime? lastLogin;
 						if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
@@ -384,12 +387,13 @@ namespace SystemUserService.DataAccess.Repositories
 							reader.GetString(reader.GetOrdinal("email")),
 							reader.GetString(reader.GetOrdinal("firstName")),
 							reader.GetString(reader.GetOrdinal("lastName")),
-							fatherName,
+							comments,
 							reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
 							lastLogin,
 							tokenExpiration,
 							lastToken,
-							reader.GetBoolean(reader.GetOrdinal("isActive"))
+							reader.GetBoolean(reader.GetOrdinal("isActive")),
+							reader.GetString(reader.GetOrdinal("phoneNumber"))
 						);
 					}
 
@@ -398,28 +402,28 @@ namespace SystemUserService.DataAccess.Repositories
 			}
 		}
 
-		public async Task<Result<List<UserRoleDTO>>> SearchUserRolesByUserName(string name)
+		public async Task<Result<List<UserRoleDTO>>> SearchUserRoles(string name)
 		{
 			await using (SqlConnection connection = new SqlConnection(_connectionString))
 			{
 				connection.Open();
-				SqlCommand command = new SqlCommand("searchUserRolesByUserName", connection);
+				SqlCommand command = new SqlCommand("SearchUserRoles", connection);
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@userNameSearch", name);
+				command.Parameters.AddWithValue("@userSearch", name);
 				await using (SqlDataReader reader = command.ExecuteReader())
 				{
 					Result<List<UserRoleDTO>> result = new Result<List<UserRoleDTO>>();
 					result.Data = new List<UserRoleDTO>();
 					while (reader.Read())
 					{
-						string? fatherName;
-						if (reader.IsDBNull(reader.GetOrdinal("fatherName")))
+						string? comments;
+						if (reader.IsDBNull(reader.GetOrdinal("comments")))
 						{
-							fatherName = null;
+							comments = null;
 						}
 						else
 						{
-							fatherName = reader.GetString(reader.GetOrdinal("fatherName"));
+							comments = reader.GetString(reader.GetOrdinal("comments"));
 						}
 						DateTime? lastLogin;
 						if (reader.IsDBNull(reader.GetOrdinal("lastLogin")))
@@ -470,12 +474,13 @@ namespace SystemUserService.DataAccess.Repositories
 							reader.GetString(reader.GetOrdinal("email")),
 							reader.GetString(reader.GetOrdinal("firstName")),
 							reader.GetString(reader.GetOrdinal("lastName")),
-							fatherName,
+							comments,
 							reader.GetDateTime(reader.GetOrdinal("dateRegistered")),
 							lastLogin,
 							tokenExpiration,
 							lastToken,
-							reader.GetBoolean(reader.GetOrdinal("isActive"))
+							reader.GetBoolean(reader.GetOrdinal("isActive")),
+							reader.GetString(reader.GetOrdinal("phoneNumber"))
 						);
 						result.Data.Add(userRoleDTO);
 					}

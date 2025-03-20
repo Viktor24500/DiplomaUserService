@@ -135,7 +135,7 @@ namespace SystemUserService.BusinessLogic.Services
 			return result;
 		}
 
-		public async Task<Result<List<UserRole>>> SearchUserRolesByUserName(string name)
+		public async Task<Result<List<UserRole>>> SearchUserRoles(string name)
 		{
 			Result<List<UserRole>> result = new Result<List<UserRole>>();
 			if (string.IsNullOrEmpty(name))
@@ -145,7 +145,7 @@ namespace SystemUserService.BusinessLogic.Services
 				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
-			Result<List<UserRoleDTO>> repResult = await _userRolesRepository.SearchUserRolesByUserName(name);
+			Result<List<UserRoleDTO>> repResult = await _userRolesRepository.SearchUserRoles(name);
 			result.Data = repResult.Data.MapToUserRoleCollection();
 			return result;
 		}

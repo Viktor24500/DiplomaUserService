@@ -36,7 +36,7 @@ namespace SystemUserService.Controllers
 		[HttpGet]
 		public async Task<IActionResult> SearchUserRolesByUserName(string name)
 		{
-			Result<List<UserRole>> result = await _userRoleService.SearchUserRolesByUserName(name);
+			Result<List<UserRole>> result = await _userRoleService.SearchUserRoles(name);
 			if (result.ErrorCode == (int)ErrorCodes.Success)
 			{
 				return Ok(result.Data);

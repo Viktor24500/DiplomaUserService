@@ -101,6 +101,14 @@ namespace SystemUserService.BusinessLogic.Services
 				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
+			repResult = await _usersRepository.GetUserByPhoneNumber(userCreateParam.PhoneNumber);
+			if (repResult.ErrorCode == (int)ErrorCodes.Success)
+			{
+				result.ErrorCode = (int)ErrorCodes.Conflict;
+				result.ErrorMessage = $"User with phone number {userCreateParam.PhoneNumber} exist";
+				_logger.LogError(result.ErrorMessage);
+				return result;
+			}
 
 			//Hash password 
 			string hashedPassword = HashPassword(userCreateParam.UserPassword);
@@ -120,8 +128,8 @@ namespace SystemUserService.BusinessLogic.Services
 				tokenExpiration = null;
 			}
 			Result<int> repCreateResult = await _usersRepository.CreateUser(userCreateParam.Username, hashedPassword,
-				userCreateParam.Email, userCreateParam.FirstName, userCreateParam.LastName, userCreateParam.FatherName, userCreateParam.DateRegistered,
-			userCreateParam.LastLogin, lastToken, tokenExpiration, userCreateParam.IsActive);
+				userCreateParam.Email, userCreateParam.FirstName, userCreateParam.LastName, userCreateParam.Comment, userCreateParam.DateRegistered,
+			userCreateParam.LastLogin, lastToken, tokenExpiration, userCreateParam.IsActive, userCreateParam.PhoneNumber);
 			if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
 			{
 				repResult = await _usersRepository.GetUser(repCreateResult.Data);
@@ -328,9 +336,20 @@ namespace SystemUserService.BusinessLogic.Services
 				}
 			}
 
+			repResult = await _usersRepository.GetUserByPhoneNumber(userUpdateParam.PhoneNumber);
+			if (repResult.ErrorCode != (int)ErrorCodes.NotFound)
+			{
+				if (repResult.Data.UserId != userUpdateParam.Id)
+				{
+					result.ErrorCode = (int)ErrorCodes.Conflict;
+					result.ErrorMessage = $"User with phone number {userUpdateParam.PhoneNumber} exist";
+					_logger.LogError(result.ErrorMessage);
+					return result;
+				}
+			}
 
 			Result repUpdateResult = await _usersRepository.UpdateUser(userUpdateParam.Id, userUpdateParam.Email,
-				userUpdateParam.FirstName, userUpdateParam.LastName, userUpdateParam.FatherName, userUpdateParam.IsActive);
+				userUpdateParam.FirstName, userUpdateParam.LastName, userUpdateParam.Comment, userUpdateParam.IsActive, userUpdateParam.PhoneNumber);
 			if (repUpdateResult.ErrorCode == (int)ErrorCodes.Success)
 			{
 				repResult = await _usersRepository.GetUser(userUpdateParam.Id);

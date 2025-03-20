@@ -49,7 +49,7 @@ namespace UserServiceTest.Users
 		public async Task CreateUser_Fail_EmptyUsername()
 		{
 			// Arrange
-			UserCreateParameters userParams = new UserCreateParameters("", "ValidPass1", "test@example.com", "John", "Doe", null, DateTime.UtcNow, null, true);
+			UserCreateParameters userParams = new UserCreateParameters("", "ValidPass1", "test@example.com", "John", "Doe", null, true, DateTime.UtcNow, null, "0966345678");
 
 			// Act
 			Result<User> result = await _userService.CreateUser(userParams);
@@ -64,7 +64,7 @@ namespace UserServiceTest.Users
 		public async Task CreateUser_Fail_EmptyPassword()
 		{
 			// Arrange
-			UserCreateParameters userParams = new UserCreateParameters("testuser", "", "test@example.com", "John", "Doe", null, DateTime.UtcNow, null, true);
+			UserCreateParameters userParams = new UserCreateParameters("testuser", "", "test@example.com", "John", "Doe", null, true, DateTime.UtcNow, null, "0966345678");
 
 			// Act
 			Result<User> result = await _userService.CreateUser(userParams);
@@ -79,7 +79,7 @@ namespace UserServiceTest.Users
 		public async Task CreateUser_Fail_InvalidPasswordPattern()
 		{
 			// Arrange
-			UserCreateParameters userParams = new UserCreateParameters("testuser", "short", "test@example.com", "John", "Doe", null, DateTime.UtcNow, null, true);
+			UserCreateParameters userParams = new UserCreateParameters("testuser", "short", "test@example.com", "John", "Doe", null, true, DateTime.UtcNow, null, "0966345678");
 
 			// Act
 			Result<User> result = await _userService.CreateUser(userParams);
@@ -94,7 +94,7 @@ namespace UserServiceTest.Users
 		public async Task CreateUser_Fail_EmptyEmail()
 		{
 			// Arrange
-			UserCreateParameters userParams = new UserCreateParameters("testuser", "ValidPass1", "", "John", "Doe", null, DateTime.UtcNow, null, true);
+			UserCreateParameters userParams = new UserCreateParameters("testuser", "ValidPass1", "", "John", "Doe", null, true, DateTime.UtcNow, null, "0966345678");
 
 			// Act
 			Result<User> result = await _userService.CreateUser(userParams);
@@ -109,7 +109,7 @@ namespace UserServiceTest.Users
 		public async Task CreateUser_Fail_EmailPatternInvalid()
 		{
 			// Arrange
-			UserCreateParameters userParams = new UserCreateParameters("testuser", "ValidPass1", "invalidemail", "John", "Doe", null, DateTime.UtcNow, null, true);
+			UserCreateParameters userParams = new UserCreateParameters("testuser", "ValidPass1", "invalidemail", "John", "Doe", null, true, DateTime.UtcNow, null, "0966345678");
 
 			// Act
 			Result<User> result = await _userService.CreateUser(userParams);
@@ -124,7 +124,8 @@ namespace UserServiceTest.Users
 		public async Task CreateUser_Fail_UsernameConflict()
 		{
 			// Arrange
-			UserCreateParameters userParams = new UserCreateParameters("existingUser", "ValidPass1", "test@example.com", "John", "Doe", null, DateTime.UtcNow, null, true);
+			UserCreateParameters userParams = new UserCreateParameters("existingUser", "ValidPass1", "test@example.com", "John",
+				"Doe", null, true, DateTime.UtcNow, null, "0966345678");
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			repoResult.ErrorCode = (int)ErrorCodes.Success;
 
@@ -144,7 +145,7 @@ namespace UserServiceTest.Users
 		public async Task CreateUser_Fail_EmailConflict()
 		{
 			// Arrange
-			var userParams = new UserCreateParameters("testuser", "ValidPass1", "existing@example.com", "John", "Doe", null, DateTime.UtcNow, null, true);
+			var userParams = new UserCreateParameters("testuser", "ValidPass1", "existing@example.com", "John", "Doe", null, true, DateTime.UtcNow, null, "0966345678");
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			repoResult.ErrorCode = (int)ErrorCodes.Success;
 
@@ -170,14 +171,14 @@ namespace UserServiceTest.Users
 		public async Task CreateUser_Success()
 		{
 			// Arrange
-			var userParams = new UserCreateParameters("testuser", "ValidPass1", "test@example.com", "John", "Doe", null, DateTime.UtcNow, null, true);
+			var userParams = new UserCreateParameters("testuser", "ValidPass1", "test@example.com", "John", "Doe", null, true, DateTime.UtcNow, null, "0966345678");
 			Result<UserDTO> getUserByUsernameResult = new Result<UserDTO>();
 			getUserByUsernameResult.ErrorCode = (int)ErrorCodes.NotFound;
 
 			Result<UserDTO> getUserByEmail = new Result<UserDTO>();
 			getUserByEmail.ErrorCode = (int)ErrorCodes.NotFound;
 
-			UserDTO resDTO = new UserDTO(1, "testuser", "", "test@example.com", "John", "Doe", null, DateTime.UtcNow, null, null, null, true);
+			UserDTO resDTO = new UserDTO(1, "testuser", "", "test@example.com", "John", "Doe", null, DateTime.UtcNow, null, null, null, true, "0966345678");
 			Result<UserDTO> expectedResult = new Result<UserDTO>();
 			expectedResult.ErrorCode = (int)ErrorCodes.Success;
 			expectedResult.Data = resDTO;
@@ -198,12 +199,13 @@ namespace UserServiceTest.Users
 				userParams.Email,
 				userParams.FirstName,
 				userParams.LastName,
-				userParams.FatherName,
+				userParams.Comment,
 				userParams.DateRegistered,
 				userParams.LastLogin,
 				null, // Token
 				null, // Token expiration
-				userParams.IsActive))
+				userParams.IsActive,
+				"0966345678"))
 				.ReturnsAsync(resCreateUser);
 
 			_mockUsersRepository.Setup(repo => repo.GetUser(1))

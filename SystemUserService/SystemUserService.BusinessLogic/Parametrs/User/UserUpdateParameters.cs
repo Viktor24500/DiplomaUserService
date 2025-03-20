@@ -2,21 +2,24 @@
 {
 	public class UserUpdateParameters
 	{
-		public UserUpdateParameters(int id, string email, string firstName, string lastName, string? fatherName, bool isActive)
+		public UserUpdateParameters(int id, string email, string firstName, string lastName, string? comment, bool isActive, string phoneNumber)
 		{
 			Id = id;
 			Email = email;
 			FirstName = firstName;
 			LastName = lastName;
-			FatherName = fatherName;
+			Comment = comment;
 			IsActive = isActive;
+			PhoneNumber = phoneNumber;
 		}
 
 		public int Id { get; set; }
 		public string Email { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
-		public string? FatherName { get; set; }
+		public string? Comment { get; set; }
 		public bool IsActive { get; set; }
+
+		public string PhoneNumber { get; set; }
 	}
 }
