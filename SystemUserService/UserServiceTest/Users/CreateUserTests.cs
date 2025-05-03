@@ -178,10 +178,14 @@ namespace UserServiceTest.Users
 			Result<UserDTO> getUserByEmail = new Result<UserDTO>();
 			getUserByEmail.ErrorCode = (int)ErrorCodes.NotFound;
 
+			Result<UserDTO> getUserByPhoneNumber = new Result<UserDTO>();
+			getUserByPhoneNumber.ErrorCode = (int)ErrorCodes.NotFound;
+
 			UserDTO resDTO = new UserDTO(1, "testuser", "", "test@example.com", "John", "Doe", null, DateTime.UtcNow, null, null, null, true, "0966345678");
 			Result<UserDTO> expectedResult = new Result<UserDTO>();
 			expectedResult.ErrorCode = (int)ErrorCodes.Success;
 			expectedResult.Data = resDTO;
+
 
 			Result<int> resCreateUser = new Result<int>();
 			resCreateUser.ErrorCode = (int)ErrorCodes.Success;
@@ -192,6 +196,9 @@ namespace UserServiceTest.Users
 
 			_mockUsersRepository.Setup(repo => repo.GetUserByEmail(userParams.Email))
 				.ReturnsAsync(getUserByEmail);
+
+			_mockUsersRepository.Setup(repo => repo.GetUserByPhoneNumber(userParams.PhoneNumber))
+				.ReturnsAsync(getUserByPhoneNumber);
 
 			_mockUsersRepository.Setup(repo => repo.CreateUser(
 				userParams.Username,

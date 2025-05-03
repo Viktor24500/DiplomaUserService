@@ -147,6 +147,9 @@ namespace UserServiceTest.Users
 			Result<UserDTO> getUserByEmail = new Result<UserDTO>();
 			getUserByEmail.ErrorCode = (int)ErrorCodes.NotFound;
 
+			Result<UserDTO> getUserByPhoneNumber = new Result<UserDTO>();
+			getUserByPhoneNumber.Data = updatedUser;
+
 			_mockUsersRepository.Setup(repo => repo.UpdateUser(updateParameters.Id, updateParameters.Email, updateParameters.FirstName,
 				updateParameters.LastName, updateParameters.Comment, updateParameters.IsActive, "0966345678"))
 				.ReturnsAsync(repositoryUpdateResult);
@@ -156,6 +159,9 @@ namespace UserServiceTest.Users
 
 			_mockUsersRepository.Setup(repo => repo.GetUserByEmail(updateParameters.Email))
 				.ReturnsAsync(getUserByEmail);
+
+			_mockUsersRepository.Setup(repo => repo.GetUserByPhoneNumber(updateParameters.PhoneNumber))
+				.ReturnsAsync(getUserByPhoneNumber);
 
 			// Act
 			Result<User> result = await _userService.UpdateUser(updateParameters);
