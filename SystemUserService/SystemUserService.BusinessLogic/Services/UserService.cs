@@ -36,8 +36,6 @@ namespace SystemUserService.BusinessLogic.Services
 		public async Task<Result<User>> CreateUser(UserCreateParameters userCreateParam)
 		{
 			Result<User> result = new Result<User>();
-			//TODO YP: всі ці перевірки треба винести в приватні методи з відповідними назвами 
-			//для того щоб це все краще читалось
 			if (string.IsNullOrWhiteSpace(userCreateParam.Username))
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -113,8 +111,6 @@ namespace SystemUserService.BusinessLogic.Services
 			//Hash password 
 			string hashedPassword = HashPassword(userCreateParam.UserPassword);
 
-			//TODO YP: токен і його екпірейшен не являються частиною профайла юзера, вони являються частино
-			//логін сесії і оброблятися повинні окремо
 			string? lastToken;
 			DateTime? tokenExpiration;
 			if (repResult.Data != null)
@@ -207,7 +203,6 @@ namespace SystemUserService.BusinessLogic.Services
 
 		public async Task<Result<Login>> LoginUser(LoginParametrs loginParam)
 		{
-			//TODO YP: тут краще винести все в приватні методи з навами щоб було читабельне флоу
 			Result<Login> result = new Result<Login>();
 			if (string.IsNullOrWhiteSpace(loginParam.Name) || string.IsNullOrWhiteSpace(loginParam.Password))
 			{
@@ -251,7 +246,6 @@ namespace SystemUserService.BusinessLogic.Services
 				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
-			//TODO YP: я вже писав що це не повинно бути частиною юзера це повинні бути сесії юзера і зберігатись в окремій таблиці
 			string token = Guid.NewGuid().ToString();
 			DateTime lastLogin = DateTime.Now;
 			//TimeZoneInfo timeZone = TimeZoneInfo.Local;

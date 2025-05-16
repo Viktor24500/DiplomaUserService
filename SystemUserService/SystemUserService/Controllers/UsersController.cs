@@ -53,16 +53,10 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		//TODO YP: погана назва і не відповідає кнвенції вище
-		//всі записи по отриманню списку юзерів можна обєднати в один АПІ з параметрами фільтруванням
-		//GET /users? status = active     # Get all active users
-		//GET /users? status = inactive   # Get all inactive users
-		//GET /users                   # Get all users regardless of status (optional)
 		[Route("/usersIsActive/{isActive}")]
 		[HttpGet]
 		public async Task<IActionResult> GetUserByActiveStatus(bool isActive)
 		{
-			//TODO YP: погана назва і як я написав вище це все може робити один метод
 			Result<List<User>> result = await _userService.GetUserByActiveStatus(isActive);
 
 			switch (result.ErrorCode)
