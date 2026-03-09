@@ -29,7 +29,7 @@ namespace SystemUserService.Controllers
 				return Ok(result.Data);
 			}
 			Utilities.HandleUnexpectedErrorCode(result);
-			return StatusCode(500);
+			return StatusCode(500, result.ErrorMessage);
 		}
 
 		[Route("/searchUserRoles/{name}")]
@@ -42,7 +42,7 @@ namespace SystemUserService.Controllers
 				return Ok(result.Data);
 			}
 			Utilities.HandleUnexpectedErrorCode(result);
-			return StatusCode(500);
+			return StatusCode(500, result.ErrorMessage);
 		}
 
 		[Route("/userRolesByRoleId/{id}")]
@@ -60,7 +60,7 @@ namespace SystemUserService.Controllers
 					return Ok(result.Data);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace SystemUserService.Controllers
 					return Ok(result.Data);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace SystemUserService.Controllers
 					return Ok(result.Data);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 
@@ -124,7 +124,7 @@ namespace SystemUserService.Controllers
 					return Conflict(result.ErrorMessage);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 	}

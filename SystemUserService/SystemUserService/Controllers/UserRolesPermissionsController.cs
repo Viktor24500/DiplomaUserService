@@ -27,7 +27,7 @@ namespace SystemUserService.Controllers
 				return Ok(result.Data);
 			}
 			Utilities.HandleUnexpectedErrorCode(result);
-			return StatusCode(500);
+			return StatusCode(500, result.ErrorMessage);
 		}
 
 		[Route("/userRolePermissionsByRoleId/{id}")]
@@ -45,7 +45,7 @@ namespace SystemUserService.Controllers
 					return Ok(result.Data);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace SystemUserService.Controllers
 					return Ok(result.Data);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 
@@ -84,7 +84,7 @@ namespace SystemUserService.Controllers
 					return Ok(result.Data);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 	}

@@ -269,7 +269,7 @@ namespace SystemUserService.BusinessLogic.Services
 				}
 				if (string.IsNullOrEmpty(repResult.Data.LastToken))
 				{
-					result.ErrorCode = (int)ErrorCodes.NotFound;
+					result.ErrorCode = (int)ErrorCodes.BadRequest;
 					result.ErrorMessage = "Token wasn't updated";
 					_logger.LogError(result.ErrorMessage);
 					return result;

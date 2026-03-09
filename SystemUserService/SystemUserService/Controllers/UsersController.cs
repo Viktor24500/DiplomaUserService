@@ -31,7 +31,7 @@ namespace SystemUserService.Controllers
 				return Ok(result.Data);
 			}
 			Utilities.HandleUnexpectedErrorCode(result);
-			return StatusCode(500);
+			return StatusCode(500, result.ErrorMessage);
 		}
 
 		[Route("/users/{id}")]
@@ -49,7 +49,7 @@ namespace SystemUserService.Controllers
 					return BadRequest(result.ErrorMessage);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 
@@ -69,7 +69,7 @@ namespace SystemUserService.Controllers
 					return BadRequest(result.ErrorMessage);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 
@@ -100,7 +100,7 @@ namespace SystemUserService.Controllers
 					return BadRequest(result.ErrorMessage);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 
@@ -125,7 +125,7 @@ namespace SystemUserService.Controllers
 					return NotFound(result.ErrorMessage);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 		[HttpPost]
@@ -140,11 +140,13 @@ namespace SystemUserService.Controllers
 					return Ok(result.Data);
 				case (int)ErrorCodes.BadRequest:
 					return BadRequest(result.ErrorMessage);
+				case (int)ErrorCodes.NotFound:
+					return NotFound(result.ErrorMessage);
 				case (int)ErrorCodes.Forbidden:
 					return StatusCode(403, result.ErrorMessage);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 
@@ -163,7 +165,7 @@ namespace SystemUserService.Controllers
 					return NotFound(result.ErrorMessage);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
-					return StatusCode(500);
+					return StatusCode(500, result.ErrorMessage);
 			}
 		}
 	}
