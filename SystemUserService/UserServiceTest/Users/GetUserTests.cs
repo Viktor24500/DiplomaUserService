@@ -45,11 +45,11 @@ namespace SystemUserServiceUnitTests.Users
 			UserDTO userDTO1 = new UserDTO(
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 			UserDTO userDTO2 = new UserDTO(
 				2, "john.doe1", "SecureP@ss523", "john.doe1@example.com",
 				"John", "Doe", null, DateTime.UtcNow, DateTime.UtcNow.AddHours(-2),
-				"xyz9817abc", DateTime.UtcNow.AddDays(2), false);
+				"xyz9817abc", DateTime.UtcNow.AddDays(2), false, "0966345678");
 			userDTOs.Add(userDTO1);
 			userDTOs.Add(userDTO2);
 
@@ -78,7 +78,7 @@ namespace SystemUserServiceUnitTests.Users
 			UserDTO userDTO1 = new UserDTO(
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 
 			Result<UserDTO> repoResult = new Result<UserDTO>();
 			repoResult.Data = userDTO1;
@@ -142,11 +142,11 @@ namespace SystemUserServiceUnitTests.Users
 			UserDTO userDTO1 = new UserDTO(
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 			UserDTO userDTO2 = new UserDTO(
 				2, "john.doe1", "SecureP@ss523", "john.doe1@example.com",
 				"John", "Doe", null, DateTime.UtcNow, DateTime.UtcNow.AddHours(-2),
-				"xyz9817abc", DateTime.UtcNow.AddDays(2), true);
+				"xyz9817abc", DateTime.UtcNow.AddDays(2), true, "0966345678");
 			//UserDTO userDTO3 = new UserDTO(
 			//	3, "john.doe2", "SecureP@ss523", "john.doe2@example.com",
 			//	"John", "Doe", null, DateTime.UtcNow, DateTime.UtcNow.AddHours(-34),
@@ -193,7 +193,7 @@ namespace SystemUserServiceUnitTests.Users
 			UserDTO userDTO = new UserDTO(
 				1, "john.doe", "SecureP@ss123", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 
 			Result<UserDTO> repoResult = new Result<UserDTO>
 			{

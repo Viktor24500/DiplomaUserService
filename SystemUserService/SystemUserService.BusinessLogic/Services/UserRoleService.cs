@@ -135,6 +135,21 @@ namespace SystemUserService.BusinessLogic.Services
 			return result;
 		}
 
+		public async Task<Result<List<UserRole>>> SearchUserRoles(string name)
+		{
+			Result<List<UserRole>> result = new Result<List<UserRole>>();
+			if (string.IsNullOrEmpty(name))
+			{
+				result.ErrorCode = (int)ErrorCodes.BadRequest;
+				result.ErrorMessage = "name can't be null or empty";
+				_logger.LogError(result.ErrorMessage);
+				return result;
+			}
+			Result<List<UserRoleDTO>> repResult = await _userRolesRepository.SearchUserRoles(name);
+			result.Data = repResult.Data.MapToUserRoleCollection();
+			return result;
+		}
+
 		public async Task<Result<UserRole>> UpdateUserRole(UserRoleUpdateParameters userRoleUpdateParam)
 		{
 			Result<UserRole> result = new Result<UserRole>();

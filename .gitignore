@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/SystemUserService/SystemUserService/Controllers/UsersController.cs

@@ -53,16 +53,10 @@ namespace SystemUserService.Controllers
 			}
 		}
 
-		//TODO YP: погана назва і не відповідає кнвенції вище
-		//всі записи по отриманню списку юзерів можна обєднати в один АПІ з параметрами фільтруванням
-		//GET /users? status = active     # Get all active users
-		//GET /users? status = inactive   # Get all inactive users
-		//GET /users                   # Get all users regardless of status (optional)
 		[Route("/usersIsActive/{isActive}")]
 		[HttpGet]
 		public async Task<IActionResult> GetUserByActiveStatus(bool isActive)
 		{
-			//TODO YP: погана назва і як я написав вище це все може робити один метод
 			Result<List<User>> result = await _userService.GetUserByActiveStatus(isActive);
 
 			switch (result.ErrorCode)
@@ -92,8 +86,8 @@ namespace SystemUserService.Controllers
 			DateTime? lastLogin = null;
 			UserCreateParameters userCreateParam = new UserCreateParameters(userCreateRequest.Username, userCreateRequest.UserPassword,
 				userCreateRequest.Email, userCreateRequest.FirstName,
-				userCreateRequest.LastName, userCreateRequest.FatherName,
-				dateRegisteredLocalDateTime, lastLogin, userCreateRequest.IsActive);
+				userCreateRequest.LastName, userCreateRequest.Comment, userCreateRequest.IsActive,
+				dateRegisteredLocalDateTime, lastLogin, userCreateRequest.PhoneNumber);
 			Result<User> result = await _userService.CreateUser(userCreateParam);
 
 			switch (result.ErrorCode)
@@ -115,8 +109,8 @@ namespace SystemUserService.Controllers
 		public async Task<IActionResult> UpdateUser([FromBody] UserUpdateRequest userUpdateRequest)
 		{
 			UserUpdateParameters userUpdateParam = new UserUpdateParameters(userUpdateRequest.Id,
-				userUpdateRequest.Email, userUpdateRequest.FirstName, userUpdateRequest.LastName, userUpdateRequest.FatherName,
-				userUpdateRequest.IsActive);
+				userUpdateRequest.Email, userUpdateRequest.FirstName, userUpdateRequest.LastName, userUpdateRequest.Comment,
+				userUpdateRequest.IsActive, userUpdateRequest.PhoneNumber);
 			Result<User> result = await _userService.UpdateUser(userUpdateParam);
 
 			switch (result.ErrorCode)
@@ -146,6 +140,8 @@ namespace SystemUserService.Controllers
 					return Ok(result.Data);
 				case (int)ErrorCodes.BadRequest:
 					return BadRequest(result.ErrorMessage);
+				case (int)ErrorCodes.Forbidden:
+					return StatusCode(403, result.ErrorMessage);
 				default:
 					Utilities.HandleUnexpectedErrorCode(result);
 					return StatusCode(500);

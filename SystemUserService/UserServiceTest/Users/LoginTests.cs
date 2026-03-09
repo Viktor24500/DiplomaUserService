@@ -97,7 +97,7 @@ namespace UserServiceTest.Users
 			UserDTO user = new UserDTO(
 				1, "user1", "Some", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678"
 				);
 			repoResult.Data = user;
 			_mockUsersRepository.Setup(repo => repo.GetUserByName(loginParam.Name))
@@ -122,7 +122,7 @@ namespace UserServiceTest.Users
 			UserDTO user = new UserDTO(
 				1, "user1", "Some", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678"
 				);
 			repoResult.Data = user;
 			_mockUsersRepository.Setup(repo => repo.GetUserByName(loginParam.Name))
@@ -147,7 +147,7 @@ namespace UserServiceTest.Users
 			UserDTO user = new UserDTO(
 				1, "user1", "Some", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678"
 				);
 			repoResult.Data = user;
 			_mockUsersRepository.Setup(repo => repo.GetUserByName(loginParam.Name))
@@ -176,7 +176,7 @@ namespace UserServiceTest.Users
 			UserDTO user = new UserDTO(
 				1, "user", "b440d283f448be5df4322477fc648ed8dfd5c4c983f0703ab84bec787b61799b", "john.doe@example.com",
 				"John", "Doe", "Michael", dateRegisteredLocalDateTime, dateRegisteredLocalDateTime.AddHours(-1),
-				"xyz98327abc", dateRegisteredLocalDateTime.AddDays(1), true
+				"xyz98327abc", dateRegisteredLocalDateTime.AddDays(1), true, "0966345678"
 				);
 			repoResult.Data = user;
 			_mockUsersRepository.Setup(repo => repo.GetUserByName(loginParam.Name))
@@ -212,7 +212,7 @@ namespace UserServiceTest.Users
 			UserDTO user = new UserDTO(
 				1, "user", "asasassa", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678"
 				);
 			repoResult.Data = user;
 			_mockUsersRepository.Setup(repo => repo.GetUserByName(loginParam.Name))

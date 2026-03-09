@@ -12,8 +12,8 @@ namespace SystemUserService.BusinessLogic.Extensions
 			User user = new User(
 				userRoleDTO.UserId, userRoleDTO.Username, userRoleDTO.UserPassword,
 				userRoleDTO.Email, userRoleDTO.FirstName, userRoleDTO.LastName,
-				userRoleDTO.FatherName, userRoleDTO.DateRegistered, userRoleDTO.LastLogin,
-				userRoleDTO.TokenExpiration, userRoleDTO.IsActive, userRoleDTO.LastToken
+				userRoleDTO.Comment, userRoleDTO.DateRegistered, userRoleDTO.LastLogin,
+				userRoleDTO.TokenExpiration, userRoleDTO.IsActive, userRoleDTO.LastToken, userRoleDTO.PhoneNumber
 			);
 
 			Role role = new Role(
@@ -47,9 +47,9 @@ namespace SystemUserService.BusinessLogic.Extensions
 				User user = new User(
 					dto.UserId, dto.Username, dto.UserPassword,
 					dto.Email, dto.FirstName,
-					dto.LastName, dto.FatherName,
+					dto.LastName, dto.Comment,
 					dto.DateRegistered, dto.LastLogin,
-					dto.TokenExpiration, dto.IsActive, dto.LastToken
+					dto.TokenExpiration, dto.IsActive, dto.LastToken, dto.PhoneNumber
 				);
 
 				// Create the UserRole object

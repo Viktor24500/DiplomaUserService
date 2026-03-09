@@ -36,8 +36,6 @@ namespace SystemUserService.BusinessLogic.Services
 		public async Task<Result<User>> CreateUser(UserCreateParameters userCreateParam)
 		{
 			Result<User> result = new Result<User>();
-			//TODO YP: всі ці перевірки треба винести в приватні методи з відповідними назвами 
-			//для того щоб це все краще читалось
 			if (string.IsNullOrWhiteSpace(userCreateParam.Username))
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
@@ -101,12 +99,18 @@ namespace SystemUserService.BusinessLogic.Services
 				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
+			repResult = await _usersRepository.GetUserByPhoneNumber(userCreateParam.PhoneNumber);
+			if (repResult.ErrorCode == (int)ErrorCodes.Success)
+			{
+				result.ErrorCode = (int)ErrorCodes.Conflict;
+				result.ErrorMessage = $"User with phone number {userCreateParam.PhoneNumber} exist";
+				_logger.LogError(result.ErrorMessage);
+				return result;
+			}
 
 			//Hash password 
 			string hashedPassword = HashPassword(userCreateParam.UserPassword);
 
-			//TODO YP: токен і його екпірейшен не являються частиною профайла юзера, вони являються частино
-			//логін сесії і оброблятися повинні окремо
 			string? lastToken;
 			DateTime? tokenExpiration;
 			if (repResult.Data != null)
@@ -120,8 +124,8 @@ namespace SystemUserService.BusinessLogic.Services
 				tokenExpiration = null;
 			}
 			Result<int> repCreateResult = await _usersRepository.CreateUser(userCreateParam.Username, hashedPassword,
-				userCreateParam.Email, userCreateParam.FirstName, userCreateParam.LastName, userCreateParam.FatherName, userCreateParam.DateRegistered,
-			userCreateParam.LastLogin, lastToken, tokenExpiration, userCreateParam.IsActive);
+				userCreateParam.Email, userCreateParam.FirstName, userCreateParam.LastName, userCreateParam.Comment, userCreateParam.DateRegistered,
+			userCreateParam.LastLogin, lastToken, tokenExpiration, userCreateParam.IsActive, userCreateParam.PhoneNumber);
 			if (repCreateResult.ErrorCode == (int)ErrorCodes.Success)
 			{
 				repResult = await _usersRepository.GetUser(repCreateResult.Data);
@@ -199,7 +203,6 @@ namespace SystemUserService.BusinessLogic.Services
 
 		public async Task<Result<Login>> LoginUser(LoginParametrs loginParam)
 		{
-			//TODO YP: тут краще винести все в приватні методи з навами щоб було читабельне флоу
 			Result<Login> result = new Result<Login>();
 			if (string.IsNullOrWhiteSpace(loginParam.Name) || string.IsNullOrWhiteSpace(loginParam.Password))
 			{
@@ -214,6 +217,13 @@ namespace SystemUserService.BusinessLogic.Services
 			{
 				result.ErrorCode = (int)ErrorCodes.BadRequest;
 				result.ErrorMessage = $"User with {loginParam.Name} not exist";
+				_logger.LogError(result.ErrorMessage);
+				return result;
+			}
+			if (repResult.Data.IsActive == false)
+			{
+				result.ErrorCode = (int)ErrorCodes.Forbidden;
+				result.ErrorMessage = $"User with {loginParam.Name} is inactive";
 				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
@@ -236,7 +246,6 @@ namespace SystemUserService.BusinessLogic.Services
 				_logger.LogError(result.ErrorMessage);
 				return result;
 			}
-			//TODO YP: я вже писав що це не повинно бути частиною юзера це повинні бути сесії юзера і зберігатись в окремій таблиці
 			string token = Guid.NewGuid().ToString();
 			DateTime lastLogin = DateTime.Now;
 			//TimeZoneInfo timeZone = TimeZoneInfo.Local;
@@ -258,7 +267,19 @@ namespace SystemUserService.BusinessLogic.Services
 					_logger.LogError(result.ErrorMessage);
 					return result;
 				}
-				result.Data = new Login(userId, tokenExpiration, repResult.Data.LastToken);
+				if (string.IsNullOrEmpty(repResult.Data.LastToken))
+				{
+					result.ErrorCode = (int)ErrorCodes.NotFound;
+					result.ErrorMessage = "Token wasn't updated";
+					_logger.LogError(result.ErrorMessage);
+					return result;
+				}
+				Result<LoginDTO> repLoginResult = await _usersRepository.GetUserByToken(repResult.Data.LastToken);
+				if (repResult.ErrorCode == (int)ErrorCodes.Success)
+				{
+					result.Data = repLoginResult.Data.MapToLogin();
+				}
+				return result;
 			}
 			return result;
 		}
@@ -309,9 +330,20 @@ namespace SystemUserService.BusinessLogic.Services
 				}
 			}
 
+			repResult = await _usersRepository.GetUserByPhoneNumber(userUpdateParam.PhoneNumber);
+			if (repResult.ErrorCode != (int)ErrorCodes.NotFound)
+			{
+				if (repResult.Data.UserId != userUpdateParam.Id)
+				{
+					result.ErrorCode = (int)ErrorCodes.Conflict;
+					result.ErrorMessage = $"User with phone number {userUpdateParam.PhoneNumber} exist";
+					_logger.LogError(result.ErrorMessage);
+					return result;
+				}
+			}
 
 			Result repUpdateResult = await _usersRepository.UpdateUser(userUpdateParam.Id, userUpdateParam.Email,
-				userUpdateParam.FirstName, userUpdateParam.LastName, userUpdateParam.FatherName, userUpdateParam.IsActive);
+				userUpdateParam.FirstName, userUpdateParam.LastName, userUpdateParam.Comment, userUpdateParam.IsActive, userUpdateParam.PhoneNumber);
 			if (repUpdateResult.ErrorCode == (int)ErrorCodes.Success)
 			{
 				repResult = await _usersRepository.GetUser(userUpdateParam.Id);

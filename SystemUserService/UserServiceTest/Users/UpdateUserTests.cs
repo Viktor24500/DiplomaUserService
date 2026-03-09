@@ -49,7 +49,7 @@ namespace UserServiceTest.Users
 		public async Task UpdateUser_Fail_IdIsNegative()
 		{
 			// Arrange
-			UserUpdateParameters updateParameters = new UserUpdateParameters(-1, "john.doe@example.com", "John", "Doe", null, true);
+			UserUpdateParameters updateParameters = new UserUpdateParameters(-1, "john.doe@example.com", "John", "Doe", null, true, "0966345678");
 
 			// Act
 			Result<User> result = await _userService.UpdateUser(updateParameters);
@@ -64,7 +64,7 @@ namespace UserServiceTest.Users
 		public async Task UpdateUser_Fail_EmailIsEmpty()
 		{
 			// Arrange
-			UserUpdateParameters updateParameters = new UserUpdateParameters(1, "", "John", "Doe", null, true);
+			UserUpdateParameters updateParameters = new UserUpdateParameters(1, "", "John", "Doe", null, true, "0966345678");
 
 			// Act
 			Result<User> result = await _userService.UpdateUser(updateParameters);
@@ -79,7 +79,7 @@ namespace UserServiceTest.Users
 		public async Task UpdateUser_Fail_FirstOrLastNameIsEmpty()
 		{
 			// Arrange
-			UserUpdateParameters updateParameters = new UserUpdateParameters(1, "john.doe@example.com", "", "Doe", null, true);
+			UserUpdateParameters updateParameters = new UserUpdateParameters(1, "john.doe@example.com", "", "Doe", null, true, "0966345678");
 
 			// Act
 			Result<User> result = await _userService.UpdateUser(updateParameters);
@@ -94,7 +94,7 @@ namespace UserServiceTest.Users
 		public async Task UpdateUser_Fail_EmailPatternInvalid()
 		{
 			// Arrange
-			UserUpdateParameters updateParameters = new UserUpdateParameters(1, "invalid-email", "John", "Doe", null, true);
+			UserUpdateParameters updateParameters = new UserUpdateParameters(1, "invalid-email", "John", "Doe", null, true, "0966345678");
 
 			// Act
 			Result<User> result = await _userService.UpdateUser(updateParameters);
@@ -109,11 +109,11 @@ namespace UserServiceTest.Users
 		public async Task UpdateUser_Fail_EmailConflict()
 		{
 			// Arrange
-			UserUpdateParameters updateParameters = new UserUpdateParameters(1, "existing@example.com", "John", "Doe", null, true);
+			UserUpdateParameters updateParameters = new UserUpdateParameters(1, "existing@example.com", "John", "Doe", null, true, "0966345678");
 
 			UserDTO existingUser = new UserDTO(2, "jane.doe", "asasassa", "existing@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 			Result<UserDTO> repositoryResult = new Result<UserDTO>();
 			repositoryResult.Data = existingUser;
 
@@ -133,21 +133,25 @@ namespace UserServiceTest.Users
 		public async Task UpdateUser_Success()
 		{
 			// Arrange
-			UserUpdateParameters updateParameters = new UserUpdateParameters(1, "john.doe@example.com", "John", "Doe", "Michael", true);
+			UserUpdateParameters updateParameters = new UserUpdateParameters(1, "john.doe@example.com", "John", "Doe", "Michael", true, "0966345678");
 
 			Result repositoryUpdateResult = new Result();
 			repositoryUpdateResult.ErrorCode = (int)ErrorCodes.Success;
 			UserDTO updatedUser = new UserDTO(
 				1, "user", "asasassa", "john.doe@example.com",
 				"John", "Doe", "Michael", DateTime.UtcNow, DateTime.UtcNow.AddHours(-1),
-				"xyz98327abc", DateTime.UtcNow.AddDays(1), true);
+				"xyz98327abc", DateTime.UtcNow.AddDays(1), true, "0966345678");
 			Result<UserDTO> repositoryGetResult = new Result<UserDTO>();
 			repositoryGetResult.Data = updatedUser;
 
 			Result<UserDTO> getUserByEmail = new Result<UserDTO>();
 			getUserByEmail.ErrorCode = (int)ErrorCodes.NotFound;
 
-			_mockUsersRepository.Setup(repo => repo.UpdateUser(updateParameters.Id, updateParameters.Email, updateParameters.FirstName, updateParameters.LastName, updateParameters.FatherName, updateParameters.IsActive))
+			Result<UserDTO> getUserByPhoneNumber = new Result<UserDTO>();
+			getUserByPhoneNumber.Data = updatedUser;
+
+			_mockUsersRepository.Setup(repo => repo.UpdateUser(updateParameters.Id, updateParameters.Email, updateParameters.FirstName,
+				updateParameters.LastName, updateParameters.Comment, updateParameters.IsActive, "0966345678"))
 				.ReturnsAsync(repositoryUpdateResult);
 
 			_mockUsersRepository.Setup(repo => repo.GetUser(updateParameters.Id))
@@ -155,6 +159,9 @@ namespace UserServiceTest.Users
 
 			_mockUsersRepository.Setup(repo => repo.GetUserByEmail(updateParameters.Email))
 				.ReturnsAsync(getUserByEmail);
+
+			_mockUsersRepository.Setup(repo => repo.GetUserByPhoneNumber(updateParameters.PhoneNumber))
+				.ReturnsAsync(getUserByPhoneNumber);
 
 			// Act
 			Result<User> result = await _userService.UpdateUser(updateParameters);
@@ -167,7 +174,7 @@ namespace UserServiceTest.Users
 			Assert.AreEqual(updateParameters.Email, result.Data.Email);
 			Assert.AreEqual(updateParameters.FirstName, result.Data.FirstName);
 			Assert.AreEqual(updateParameters.LastName, result.Data.LastName);
-			Assert.AreEqual(updateParameters.FatherName, result.Data.FatherName);
+			Assert.AreEqual(updateParameters.Comment, result.Data.Comment);
 			Assert.AreEqual(updateParameters.IsActive, result.Data.IsActive);
 		}
 	}
